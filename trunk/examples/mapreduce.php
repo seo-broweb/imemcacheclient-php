@@ -10,6 +10,7 @@ class MapReduce
  public $reduceResult = array();
  public $mapResult = array();
  public $masterfp;
+ pulibc $masterdone = TRUE;
  public __construct()
  {
   $this->memcache = new IMemcacheClient;
@@ -19,9 +20,9 @@ class MapReduce
  public function getMapValue($key)
  {
   return 1;
-  if (!isset($this->mapResult[$key])) {$this->mapResult[$key] = 0;}
-  ++$this->mapResult[$key];
-  return $value;
+  //if (!isset($this->mapResult[$key])) {$this->mapResult[$key] = 0;}
+  //++$this->mapResult[$key];
+  //return $value;
  }
  public function input($string)
  {
@@ -29,8 +30,10 @@ class MapReduce
  }
  public function masterIteration()
  {
+  if ($this->masterdone) {return;}
   if ($this->masterfp === NULL) {$this->masterfp = fopen('rules.txt','r');}
   if (($line = fgets($fp)) !== FALSE) {return $this->input($string);}
+  $this->masterdone = TRUE;
   fclose($this->masterfp);
  }
  public function mapIteration()
@@ -49,13 +52,18 @@ class MapReduce
    list ($key, $value) = json_decode($item);
    if (!isset($this->reduceResult[$key])) {$this->reduceResult[$key] = 0;}
    $this->reduceResult[$key] += (int) $value;
+   return TRUE;
   }
+  return FALSE;
  }
 }
 $mapreduce = new MapReduce;
 while (TRUE)
 {
  $this->masterIteration();
- $this->mapIteration();
- $this->reduceIteration();
+ if ((!$this->mapIteration()) && (!$this->reduceIteration()))
+ {
+  break;
+ }
 }
+var_dump($this->reduceResult);
