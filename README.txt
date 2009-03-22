@@ -8,5 +8,6 @@ It extends standart features with the following implementations:
  - Optional tracing all commands for debugging.
 And more.
 
+Under LGPL.
 Web: http://code.google.com/p/imemcacheclient-php/
 Written by kak.serpom.po.yaitsam@gmail.com
