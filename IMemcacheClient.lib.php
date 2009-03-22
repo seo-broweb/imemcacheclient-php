@@ -194,7 +194,6 @@ class IMemcacheClient_MQueue
   if ($this->strategy === 1)
   {
    $n = $this->memcache->get($k);
-   //var_dump(array($n,$this->knownMaxId));
    if ($n !== FALSE)
    {
     ++$n;
@@ -202,7 +201,6 @@ class IMemcacheClient_MQueue
     if (!$v = $this->getById($n))
     {
      $isFutureCheck = ($this->knownMaxId !== NULL) && ($n > $this->knownMaxId);
-     //var_dump(array('future',$isFutureCheck));
      if (!$isFutureCheck) {$this->passedCorrupted = TRUE;}
      else {return FALSE;}
     }
