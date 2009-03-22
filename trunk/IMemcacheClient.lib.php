@@ -189,7 +189,12 @@ class IMemcacheClient_MQueue
  public function getNext()
  {
   $this->passedCorrupted = FALSE;
-  if ($this->exclusiveRead === FALSE) {return $this->getById($this->readpointer++);}
+  if ($this->exclusiveRead === FALSE)
+  {
+   $r = $this->getById($this->readpointer);
+   if ($r) {++$this->readpointer;}
+   return $r;
+  }
   $k = 'qr.'.$this->exclusiveRead.'.'.$this->id;
   if ($this->strategy === 1)
   {
