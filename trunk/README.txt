@@ -7,3 +7,6 @@ It extends standart features with the following implementations:
  - Multiple delete.
  - Optional tracing all commands for debugging.
 And more.
+
+Web: http://code.google.com/p/imemcacheclient-php/
+Written by kak.serpom.po.yaitsam@gmail.com
