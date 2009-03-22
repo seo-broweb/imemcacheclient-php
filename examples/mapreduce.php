@@ -10,12 +10,12 @@ class MapReduce
  public $reduceResult = array();
  public $mapResult = array();
  public $masterfp;
- pulibc $masterdone = TRUE;
- public __construct()
+ public $masterdone = TRUE;
+ public function __construct()
  {
   $this->memcache = new IMemcacheClient;
-  $this->mapqueue = $this->memcache->queue('mr.m.'.$this->id);
-  $this->reducequeue = $this->memcache->queue('mr.r.'.$this->id);
+  $this->mapqueue = $this->memcache->queue('mr.m.'.$this->id,TRUE,3600);
+  $this->reducequeue = $this->memcache->queue('mr.r.'.$this->id,TRUE,3600);
  }
  public function getMapValue($key)
  {
@@ -58,6 +58,7 @@ class MapReduce
  }
 }
 $mapreduce = new MapReduce;
+$mapreduce->memcache = xE::$memcache;
 while (TRUE)
 {
  $this->masterIteration();
