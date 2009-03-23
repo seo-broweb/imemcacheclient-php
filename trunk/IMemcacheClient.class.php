@@ -127,8 +127,4 @@ class IMemcacheClient
  {
   return new IMemcacheClient_Lock($this,$id,$time,$repeats,$interval);
  }
- public function MapReduce($id)
- {
-  return new IMemcacheClient_MapReduce($this,$id);
- }
 }
