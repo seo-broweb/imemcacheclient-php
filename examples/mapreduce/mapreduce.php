@@ -1,6 +1,4 @@
 <?php
-include dirname(__FILE__).'/init.php';
-
 class MapReduce
 {
  public $mapqueue;
@@ -17,25 +15,8 @@ class MapReduce
   $this->mapqueue = $this->memcache->queue('mr.m.'.$this->id,TRUE,3600);
   $this->reducequeue = $this->memcache->queue('mr.r.'.$this->id,TRUE,3600);
  }
- public function getMapValue($key)
- {
-  preg_match_all('~\S+~u',$key,$w);
-  $c = array();
-  //var_dump(array('preg',$key,$w[0]));
-  foreach ($w[0] as $v)
-  {
-   if (!isset($c[$v])) {$c[$v] = 1;}
-   else {++$c[$v];}
-  }
-  $s = '';
-  foreach ($c as $k => $v) {$s .= ($s !== ''?"\n":'').$k."\t".$v;}
-  return $s;
- }
- public function input($string)
- {
-  //var_dump(array('input',$string));
-  $id = $this->mapqueue->push($string);
- }
+ public function getMapValue($key) {return call_user_func($this->mapcallback,$key);}
+ public function input($string) {return $this->mapqueue->push($string);}
  public function masterIteration()
  {
   if ($this->masterdone) {return;}
@@ -75,15 +56,3 @@ class MapReduce
   return FALSE;
  }
 }
-setlocale(LC_ALL,'ru_RU.UTF-8');
-$mapreduce = new MapReduce;
-$mapreduce->memcache = xE::$memcache;
-while (TRUE)
-{
- $mapreduce->masterIteration();
- $m = $mapreduce->mapIteration();
- $r = $mapreduce->reduceIteration();
- if (!$m && !$r) {break;}
-}
-asort($mapreduce->reduceResult);
-var_dump($mapreduce->reduceResult);
