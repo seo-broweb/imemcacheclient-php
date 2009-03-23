@@ -202,7 +202,6 @@ class IMemcacheClient_MQueue
    if ($n !== FALSE)
    {
     ++$n;
-    echo "Checking for item #".$n."\n";
     if (!$v = $this->getById($n))
     {
      $isFutureCheck = ($this->knownMaxId !== NULL) && ($n > $this->knownMaxId);
