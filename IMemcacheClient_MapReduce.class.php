@@ -4,30 +4,20 @@ class MapReduce
  public $mapqueue;
  public $reducequeue;
  public $memcache;
- public $id = 'test';
+ public $id;
  public $reduceResult = array();
  public $masterfp;
  public $masterdone = FALSE;
- public function __construct()
+ public function __construct($memcache,$id)
  {
-  $this->memcache = new IMemcacheClient;
-  $this->memcache->addServers(array(array('81.177.151.81','11211')));
+  $this->id = $id;
+  $this->memcache = $memcache;
   $this->mapqueue = $this->memcache->queue('mr.m.'.$this->id,TRUE,3600);
   $this->reducequeue = $this->memcache->queue('mr.r.'.$this->id,TRUE,3600);
  }
  public function getMapValue($key) {return call_user_func($this->mapcallback,$key);}
  public function input($string) {return $this->mapqueue->push($string);}
  public function masterIteration()  preg_match_all('~\S+~u',$key,$w);
-  $c = array();
-  //var_dump(array('preg',$key,$w[0]));
-  foreach ($w[0] as $v)
-  {
-   if (!isset($c[$v])) {$c[$v] = 1;}
-   else {++$c[$v];}
-  }
-  $s = '';
-  foreach ($c as $k => $v) {$s .= ($s !== ''?"\n":'').$k."\t".$v;}
-  return $s;
  {
   if ($this->masterdone) {return;}
   if ($this->masterfp === NULL) {$this->masterfp = fopen(dirname(__FILE__).'/rules.txt','r');}

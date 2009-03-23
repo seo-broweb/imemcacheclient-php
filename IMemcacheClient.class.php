@@ -119,12 +119,16 @@ class IMemcacheClient
   if ($this->trace) {$this->trace_stack[] = array('decrement',$k);}
   return $this->conn->decrement($this->prefix.$k,$v);
  }
- public function queue($id,$exclusiveRead = NULL,$defaultItemTTL = NULL)
+ public function Queue($id,$exclusiveRead = NULL,$defaultItemTTL = NULL)
  {
   return new IMemcacheClient_Queue($this,$id,$exclusiveRead,$defaultItemTTL);
  }
- public function lock($id,$time = NULL,$repeats = NULL,$interval = NULL)
+ public function Lock($id,$time = NULL,$repeats = NULL,$interval = NULL)
  {
   return new IMemcacheClient_Lock($this,$id,$time,$repeats,$interval);
+ }
+ public function MapReduce($id)
+ {
+  return new IMemcacheClient_MapReduce($this,$id);
  }
 }
