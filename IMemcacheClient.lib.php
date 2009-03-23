@@ -18,10 +18,6 @@ class IMemcacheClient
    $this->setOption(Memcached::OPT_COMPRESSION,$this->compress);
   }
  }
- public function queue($id,$exclusiveRead = TRUE,$defaultItemTTL = 0)
- {
-  return new IMemcacheClient_MQueue($this,$id,$exclusiveRead,$defaultItemTTL);
- }
  public function setOption($k,$v)
  {
   return $this->conn->setOption($k,$v);
@@ -43,28 +39,6 @@ class IMemcacheClient
    return TRUE;
   }
   return $this->conn->addServers($a);
- }
- public function acquire($id,$time = 10,$repeats = 0,$interval = 1)
- {
-  if ($this->trace) {$this->trace_stack[] = array('acquire',$id,$time,$repeats,$interval);}
-  $i = 0;
-  while (!$r = $this->add('lck.'.$id,time(),$time))
-  {
-   if ($i >= $repeats) {break;}
-   sleep($interval);
-   ++$i;
-  }
-  return $r;
- }
- public function release($id,$d = 0)
- {
-  if ($this->trace) {$this->trace_stack[] = array('release',$id,$d);}
-  return $this->delete('lck.'.$id,$d);
- }
- public function isLocked($id)
- {
-  if ($this->trace) {$this->trace_stack[] = array('isLocked',$id);}
-  return $this->get('lck.'.$id);
  }
  public function get($k)
  {
@@ -145,8 +119,55 @@ class IMemcacheClient
   if ($this->trace) {$this->trace_stack[] = array('decrement',$k);}
   return $this->conn->decrement($this->prefix.$k,$v);
  }
+ public function queue($id,$exclusiveRead = NULL,$defaultItemTTL = NULL)
+ {
+  return new IMemcacheClient_Queue($this,$id,$exclusiveRead,$defaultItemTTL);
+ }
+ public function lock($id,$time = NULL,$repeats = NULL,$interval = NULL)
+ {
+  return new IMemcacheClient_Lock($this,$id,$time,$repeats,$interval);
+ }
 }
-class IMemcacheClient_MQueue
+class IMemcacheClient_Lock
+{
+ public $id;
+ public $memcache;
+ public $time;
+ public $repeats;
+ public $interval;
+ public function __construct($time = NULL,$repeats = NULL,$interval = NULL)
+ {
+  if ($time === NULL) {$time = 10;}
+  if ($repeats === NULL) {$repeats = 0;}
+  if ($interval === NULL) {$interaval = 1;}
+  $this->time = $time;
+  $this->repeats = $repeats;
+  $this->interval = $interval;
+ }
+ public function acquire()
+ {
+  if ($this->memcache->trace) {$this->memcache->trace_stack[] = array('acquire',$this->id,$this->time,$this->repeats,$this->interval);}
+  $i = 0;
+  while (!$r = $this->memcache->add('lck.'.$this->id,time(),$this->time))
+  {
+   if ($i >= $this->repeats) {break;}
+   sleep($this->interval);
+   ++$i;
+  }
+  return $r;
+ }
+ public function release($d = 0)
+ {
+  if ($this->memcache->trace) {$this->memcache->trace_stack[] = array('release',$this->memcache->id,$d);}
+  return $this->memcache->delete('lck.'.$id,$d);
+ }
+ public function isLocked($id)
+ {
+  if ($this->memcache->trace) {$this->memcache->trace_stack[] = array('isLocked',$id);}
+  return $this->memcache->get('lck.'.$id);
+ }
+}
+class IMemcacheClient_Queue
 {
  public $memcache;
  public $id;
@@ -163,8 +184,10 @@ class IMemcacheClient_MQueue
  public $lastReadStatus = TRUE;
  public $lastItemId;
  public $knownMaxId = 0;
- public function __construct($memcache,$id,$exclusiveRead = TRUE,$defaultItemTTL = 0)
+ public function __construct($memcache,$id,$exclusiveRead = NULL,$defaultItemTTL = NULL)
  {
+  if ($exclusiveRead === NULL) {$exclusiveRead = TRUE;}
+  if ($defaultItemTTL === NULL) {$defaultItemTTL = 10;}
   if ($exclusiveRead === TRUE) {$this->exclusiveRead = 'main';}
   elseif ($exclusiveRead !== FALSE) {$this->exclusiveRead = $exclusiveRead;}
   $this->memcache = $memcache;
