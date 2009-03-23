@@ -1,12 +1,10 @@
 <?php
 setlocale(LC_ALL,'ru_RU.UTF-8');
 include dirname(__FILE__).'/../IMemcacheClient.php';
-include dirname(__FILE__).'/MapReduce.class.php';
-$queue = xE::$memcache->queue('test',TRUE,3600);
-$queue->addServer('127.0.0.1','11211');
-$queue->strategy = 1;
-$mapreduce = new MapReduce;
-$mapreduce->memcache = xE::$memcache;
+include dirname(__FILE__).'/../IMemcacheClient_Queue.class.php';
+include dirname(__FILE__).'/../IMemcacheClient_MapReduce.class.php';
+$memcache = new IMemcacheClient;
+$mapreduce = $memcache->MapReduce('test');
 function mapcallback()
 {
  preg_match_all('~\S+~u',$key,$w);
