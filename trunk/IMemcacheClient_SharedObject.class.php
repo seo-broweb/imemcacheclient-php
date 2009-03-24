@@ -31,15 +31,16 @@ class IMemcacheClient_SharedObject
  }
  public function fetchWrite()
  {
-  if ($this->lock->acquire() && $this->fetch()) {return 1;}
+  if ($this->lock->acquire() && $this->fetch(TRUE)) {return 1;}
   return 0;
  }
  public function fetch($nonCache = FALSE)
  {
   if (!isset($this->obj) || $nonCache)
   {
-   if (($o = $this->memcache->get('sho.'.$this->id)) === FALSE) {return FALSE;}
-   return $this->obj = unserialize($o);
+   $o = $this->memcache->get('sho.'.$this->id);
+   $this->obj = ($o === FALSE)?FALSE:unserialize($o);
+   return $o !== FALSE;
   }
   return TRUE;
  }
