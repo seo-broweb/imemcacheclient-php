@@ -36,16 +36,16 @@ class MyJob extends MapReduce_Job
   fclose($this->masterfp);
   return TRUE;
  }
- public function reduceIteration($key,$value)
+ public function reduceIteration($instance, $key, $value)
  {
- var_dump($value);
+  
   $a = explode("\n",$value);
   foreach ($a as &$s)
   {
    if ($s === '') {continue;}
    list ($k,$v) = explode("\t",$s);
-   if (!isset($this->reduceResult[$k])) {$this->reduceResult[$k] = 0;}
-   $this->reduceResult[$k] += (int) $v;
+   if (!isset($o[$k])) {$o[$k] = (int) $v;}
+   else {$o[$k] += (int) $v;}
   }
  }
 }
