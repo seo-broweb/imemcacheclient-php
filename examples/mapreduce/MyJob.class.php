@@ -26,7 +26,12 @@ class MyJob extends MapReduce_Job
  {
   if ($this->masterdone) {return FALSE;}
   if ($this->masterfp === NULL) {$this->masterfp = fopen($this->path,'r');}
-  if (($line = fgets($this->masterfp)) !== FALSE) {return $this->input($line);}
+  if (($line = fgets($this->masterfp)) !== FALSE)
+  {
+   $this->input($line);
+   var_dump($line);
+   return TRUE;
+  }
   $this->masterdone = TRUE;
   fclose($this->masterfp);
   return TRUE;
