@@ -14,20 +14,25 @@ class IMemcacheClient_SharedObject
   $this->memcache = $memcache;
   $this->id = $id;
   $this->TTL = $TTL;
-  $this->lock = $this->memcache->lock('sho.'.$this->id);
+  $this->lock = $this->memcache->Lock('sho.'.$this->id,$this->TTL,$this->repeats,$this->interval);
  }
  public function fetchInter()
  {
   if ($this->fetch()) {return 1;}
   if ($this->lock->acquire(0)) {return 2;}
   $i = 0;
-  while ($this->fetch())
+  while (!$this->fetch())
   {
    sleep($this->interval);
    ++$i;
    if ($i > $this->repeats) {return 0;}
   }
   return 1;
+ }
+ public function fetchWrite()
+ {
+  if ($this->lock->acquire() && $this->fetch()) {return 1;}
+  return 0;
  }
  public function fetch($nonCache = FALSE)
  {
