@@ -8,10 +8,11 @@ class MapReduce
  public $reduceResult = array();
  public $masterfp;
  public $masterdone = FALSE;
- public function __construct($memcache,$TTL = NULL)
+ public function __construct($memcache,$id,$TTL = NULL)
  {
   if ($TTL === NULL) {$TTL = 3600;}
   $this->memcache = $memcache;
+  $this->id = $id;
   $this->mapqueue = $this->memcache->queue('mr.m.'.$this->id,TRUE,$TTL);
   $this->reducequeue = $this->memcache->queue('mr.r.'.$this->id,TRUE,$TTL);
  }
