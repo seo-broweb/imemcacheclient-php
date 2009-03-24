@@ -8,12 +8,15 @@ class IMemcacheClient_SharedObject
  public $TTL;
  public $interval = 0.3;
  public $repeats = 10;
- public function __construct($memcache,$id,$TTL = NULL)
+ public $rewritable = TRUE;
+ public function __construct($memcache,$id,$TTL = NULL,$rewritable = NULL)
  {
   if ($TTL === NULL) {$TTL = 0;}
+  if ($rewriteable === NULL) {$rewriteable = TRUE;}
   $this->memcache = $memcache;
   $this->id = $id;
   $this->TTL = $TTL;
+  $this->rewriteable = $rewriteable;
   $this->lock = $this->memcache->Lock('sho.'.$this->id,$this->TTL,$this->repeats,$this->interval);
  }
  public function fetchInter()
@@ -54,11 +57,31 @@ class IMemcacheClient_SharedObject
  }
  public function append($s)
  {
-  return $this->memcache->append('sho.'.$this->id,$this->encode($s));
+  if (!$this->reloadable)
+  {
+   return $this->memcache->append('sho.'.$this->id,$this->encode($s));
+  }
+  if ($this->lock->acquire())
+  {
+   $r = $this->memcache->append('sho.'.$this->id,$this->encode($s));
+   $this->lock->release();
+   return $r;
+  }
+  return FALSE;
  }
  public function prepend($s)
  {
-  return $this->memcache->prepend('sho.'.$this->id,$this->encode($s));
+ if (!$this->reloadable)
+  {
+   return $this->memcache->prepend('sho.'.$this->id,$this->encode($s));
+  }
+  if ($this->lock->acquire())
+  {
+   $r = $this->memcache->prepend('sho.'.$this->id,$this->encode($s));
+   $this->lock->release();
+   return $r;
+  }
+  return FALSE;
  }
  public function decode($s)
  {
