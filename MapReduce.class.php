@@ -18,7 +18,7 @@ class MapReduce
  }
  public function getReducedObject($job,$instance)
  {
-  return $this->memcache->SharedObject('mr.o.'.$instance.'.',$job->TTL);
+  return $this->memcache->SharedObject('mr.o.'.$job->name.'_'.$instance.'.',$job->TTL);
  }
  public function addJob($job)
  {
