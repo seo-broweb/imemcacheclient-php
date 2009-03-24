@@ -6,12 +6,13 @@ class IMemcacheClient_Lock
  public $time;
  public $repeats;
  public $interval;
- public function __construct($memcache,$time = NULL,$repeats = NULL,$interval = NULL)
+ public function __construct($memcache,$id,$time = NULL,$repeats = NULL,$interval = NULL)
  {
   if ($time === NULL) {$time = 10;}
   if ($repeats === NULL) {$repeats = 0;}
   if ($interval === NULL) {$interaval = 1;}
   $this->memcache = $memcache;
+  $this->id = $id;
   $this->time = $time;
   $this->repeats = $repeats;
   $this->interval = $interval;
