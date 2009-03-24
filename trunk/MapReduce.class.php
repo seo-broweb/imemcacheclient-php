@@ -23,7 +23,12 @@ class MapReduce
  public function input($string) {return $this->mapqueue->push($string);}
  public function masterIteration()
  {
-  return $this->job->masterIteration();
+  $r = FALSE;
+  foreach ($this->jobs as &$job)
+  {
+   if ($job->masterIteration()) {$r = TRUE;}
+  }
+  return $r;
  }
  public function mapIteration()
  {
