@@ -31,7 +31,15 @@ class IMemcacheClient_SharedObject
  }
  public function fetchWrite()
  {
-  if ($this->lock->acquire() && $this->fetch(TRUE)) {return 1;}
+  if ($this->lock->acquire())
+  {
+   if ($this->fetch(TRUE)) {return 1;}
+   else
+   {
+    $this->lock->release();
+    return 0;
+   }
+  }
   return 0;
  }
  public function fetch($nonCache = FALSE)
