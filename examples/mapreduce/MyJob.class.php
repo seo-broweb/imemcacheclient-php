@@ -4,6 +4,7 @@ class MyJob extends MapReduce_Job
  public $masterdone;
  public $masterfp;
  public $path;
+ public $name = 'MyJob';
  public function init()
  {
   $this->path = dirname(__FILE__).'/example.txt';
