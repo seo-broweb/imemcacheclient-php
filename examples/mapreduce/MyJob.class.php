@@ -55,13 +55,12 @@ class MyJob extends MapReduce_Job
   }
   if ($object->fetchWrite())
   {
-   $o = $object->obj->table;
    foreach ($a as &$s)
    {
     if ($s === '') {continue;}
     list ($k,$v) = explode("\t",$s);
-    if (!isset($o[$k])) {$o[$k] = (int) $v;}
-    else {$o[$k] += (int) $v;}
+    if (!isset($object->obj->table[$k])) {$object->obj->table[$k] = (int) $v;}
+    else {$object->obj->table[$k] += (int) $v;}
    }
    $object->flush();
   }
