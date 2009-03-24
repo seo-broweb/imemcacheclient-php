@@ -23,11 +23,12 @@ class MyJob extends MapReduce_Job
  }
  public function masterIteration()
  {
-  if ($this->masterdone) {return;}
+  if ($this->masterdone) {return FALSE;}
   if ($this->masterfp === NULL) {$this->masterfp = fopen($this->path,'r');}
-  if (($line = fgets($this->masterfp)) !== FALSE) {return $this->input($line);}
+  if (($line = fgets($this->masterfp)) !== FALSE) {$this->input($line);}
   $this->masterdone = TRUE;
   fclose($this->masterfp);
+  return TRUE;
  }
  public function reduceIteration($key,$value)
  {
