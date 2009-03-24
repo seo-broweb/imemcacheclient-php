@@ -46,7 +46,7 @@ class MapReduce
   {
    list($job, $instance, $key) = json_decode($msg);
    $value = $this->jobs[$job]->getMapValue($key);
-   var_dump(array('mapIteration',$job,$key,$value));
+   var_dump(array('mapIteration',$job,$instance,$key,$value));
    $json = json_encode(array($job,$instance,$key,$value));
    $this->reducequeue->push($json);
    return TRUE;
