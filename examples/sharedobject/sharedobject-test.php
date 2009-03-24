@@ -16,7 +16,8 @@ if ($status = $object->fetchInter())
   $object->obj->lastMtime = time();
   $object->flush();
  }
- elseif (time()+1 > $object->obj->lastMtime)
+ //elseif (time()-10 > $object->obj->lastMtime)
+ else
  {
   if ($object->fetchWrite())
   {

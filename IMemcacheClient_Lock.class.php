@@ -27,7 +27,7 @@ class IMemcacheClient_Lock
   while (!$r = $this->memcache->add('lck.'.$this->id,time(),$this->time))
   {
    if (($i >= $this->repeats) && ($this->repeats !== -1)) {break;}
-   sleep($this->interval);
+   usleep($this->interval*1000000);
    ++$i;
   }
   if ($r) {$this->acquired = TRUE;}
@@ -35,14 +35,14 @@ class IMemcacheClient_Lock
  }
  public function release($d = 0,$force = FALSE)
  {
-  if ($this->memcache->trace) {$this->memcache->trace_stack[] = array('release',$this->memcache->id,$d);}
+  if ($this->memcache->trace) {$this->memcache->trace_stack[] = array('release',$this->id,$d);}
   if (!$this->acquired && !$force) {return FALSE;}
   $this->acquired = FALSE;
-  return $this->memcache->delete('lck.'.$id,$d);
+  return $this->memcache->delete('lck.'.$this->id,$d);
  }
- public function isLocked($id)
+ public function isLocked()
  {
-  if ($this->memcache->trace) {$this->memcache->trace_stack[] = array('isLocked',$id);}
-  return $this->memcache->get('lck.'.$id);
+  if ($this->memcache->trace) {$this->memcache->trace_stack[] = array('isLocked',$this->id);}
+  return $this->memcache->get('lck.'.$this->id);
  }
 }
