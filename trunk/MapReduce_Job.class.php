@@ -3,6 +3,7 @@ class MapReduce_Job
 {
  public $name;
  public $reducedObj;
+ public $TTL = 0;
  public function __construct() {}
  public function input($instance,$key)
  {
