@@ -19,7 +19,7 @@ class MapReduce
  public function addJob($job)
  {
   $job->mapreduce = $this;
-  return $job;
+  return $this->jobs[$job->name] = $job;
  }
  public function input($string) {return $this->mapqueue->push($string);}
  public function masterIteration()

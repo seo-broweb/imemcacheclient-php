@@ -1,7 +1,7 @@
 <?php
 class MapReduce_Job
 {
- public $id;
+ public $name;
  public function __construct() {}
  public function input($a)
  {
