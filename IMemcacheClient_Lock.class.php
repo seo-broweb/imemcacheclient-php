@@ -9,7 +9,7 @@ class IMemcacheClient_Lock
  public $acquired = FALSE;
  public function __construct($memcache,$id,$time = NULL,$repeats = NULL,$interval = NULL)
  {
-  if ($time === NULL) {$time = 10;}
+  if ($time === NULL) {$time = 0;}
   if ($repeats === NULL) {$repeats = 0;}
   if ($interval === NULL) {$interaval = 1;}
   $this->memcache = $memcache;
