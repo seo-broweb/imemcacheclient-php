@@ -16,6 +16,10 @@ class MapReduce
   $this->mapqueue = $this->memcache->queue('mr.m.'.$this->id,TRUE,$TTL);
   $this->reducequeue = $this->memcache->queue('mr.r.'.$this->id,TRUE,$TTL);
  }
+ public function getReducedObject($job,$instance)
+ {
+  return $this->memcache->SharedObject('mr.o.'.$instance.'.',$job->TTL);
+ }
  public function addJob($job)
  {
   $job->mapreduce = $this;
