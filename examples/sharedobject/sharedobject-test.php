@@ -6,7 +6,7 @@ $object = $memcache->SharedObject('myobject',300);
 $object->lock->time = 3;
 $object->lock->repeats = -1;
 
-if ($status = $object->fetchIter())
+if ($status = $object->fetchInter())
 {
  if ($status == 2)
  {
@@ -16,7 +16,7 @@ if ($status = $object->fetchIter())
   $object->obj->lastMtime = time();
   $object->flush();
  }
- elseif (time()-10 > $object->obj->lastMtime)
+ elseif (time()+1 > $object->obj->lastMtime)
  {
   if ($object->fetchWrite())
   {
@@ -26,6 +26,6 @@ if ($status = $object->fetchIter())
    $object->flush();
   }
  }
- var_dump($object);
+ var_dump($object->obj);
 }
 else {echo "Couldn't fetch object or acquire the mutex.\n";}
