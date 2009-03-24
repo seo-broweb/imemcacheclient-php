@@ -24,7 +24,7 @@ class IMemcacheClient_Lock
   $i = 0;
   while (!$r = $this->memcache->add('lck.'.$this->id,time(),$this->time))
   {
-   if ($i >= $this->repeats) {break;}
+   if (($i >= $this->repeats) && ($this->repeats !== -1)) {break;}
    sleep($this->interval);
    ++$i;
   }
