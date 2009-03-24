@@ -29,7 +29,7 @@ class MyJob extends MapReduce_Job
   if ($this->masterfp === NULL) {$this->masterfp = fopen($this->path,'r');}
   if (($line = fgets($this->masterfp)) !== FALSE)
   {
-   $id = $this->input($line);
+   $id = $this->input(sprintf('%x',crc32($this->path)),$line);
    return $id;
   }
   $this->masterdone = TRUE;
