@@ -127,4 +127,8 @@ class IMemcacheClient
  {
   return new IMemcacheClient_Lock($this,$id,$time,$repeats,$interval);
  }
+ public function SharedObject($id,$TTL = NULL)
+ {
+  return new IMemcacheClient_SharedObject($this,$id,$TTL);
+ }
 }
