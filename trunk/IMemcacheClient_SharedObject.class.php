@@ -6,6 +6,8 @@ class IMemcacheClient_SharedObject
  public $lock;
  public $obj;
  public $TTL;
+ public $interval = 0.3;
+ public $repeats = 10;
  public function __construct($memcache,$id,$TTL = NULL)
  {
   if ($TTL === NULL) {$TTL = 0;}
@@ -14,14 +16,27 @@ class IMemcacheClient_SharedObject
   $this->TTL = $TTL;
   $this->lock = $this->memcache->lock('sho.'.$this->id);
  }
+ public function fetchInter()
+ {
+  if ($this->fetch()) {return 1;}
+  if ($this->lock->acquire(0)) {return 2;}
+  $i = 0;
+  while ($this->fetch())
+  {
+   sleep($this->interval);
+   ++$i;
+   if ($i > $this->repeats) {return 0;}
+  }
+  return 1;
+ }
  public function fetch($nonCache = FALSE)
  {
   if (!isset($this->obj) || $nonCache)
   {
-   $o = $this->memcache->get('sho.'.$this->id);
+   if (($o = $this->memcache->get('sho.'.$this->id)) === FALSE) {return FALSE;}
    return $this->obj = unserialize($o);
   }
-  return $this->obj;
+  return TRUE;
  }
  public function write()
  {
