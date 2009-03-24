@@ -3,7 +3,8 @@ class MyJob extends MapReduce_Job
 {
  public $masterdone;
  public $masterfp;
- public $path;
+ public $path; // master
+ public $instanceName; // master
  public $name = 'MyJob';
  public function __construct()
  {
@@ -23,13 +24,18 @@ class MyJob extends MapReduce_Job
   foreach ($c as $k => $v) {$s .= ($s !== ''?"\n":'').$k."\t".$v;}
   return $s;
  }
+ public function defInstanceName()
+ {
+  if ($this->instanceName === NULL) {$this->instanceName = sprintf('%x',crc32($this->path));}
+ }
  public function masterIteration()
  {
   if ($this->masterdone) {return FALSE;}
   if ($this->masterfp === NULL) {$this->masterfp = fopen($this->path,'r');}
+  $this->defInstanceName();
   if (($line = fgets($this->masterfp)) !== FALSE)
   {
-   $id = $this->input(sprintf('%x',crc32($this->path)),$line);
+   $id = $this->input($this->instanceName,$line);
    return $id;
   }
   $this->masterdone = TRUE;

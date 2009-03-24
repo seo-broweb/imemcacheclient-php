@@ -25,6 +25,11 @@ class MapReduce
   $job->mapreduce = $this;
   return $this->jobs[$job->name] = $job;
  }
+ public function getJobByName($name)
+ {
+  if (isset($this->jobs[$name])) {return $this->jobs[$name];}
+  return $this->jobs[$name];
+ }
  public function input($job,$instance,$key)
  {
   $id = $this->mapqueue->push(json_encode(array($job,$instance,$key)));
