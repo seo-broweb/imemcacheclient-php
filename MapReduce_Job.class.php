@@ -10,16 +10,8 @@ class MapReduce_Job
  {
   return $this->mapreduce->input($a);
  }
- abstract public function init()
- {
- }
- abstract public function getMapValue($key)
- {
- }
- abstract public function masterIteration()
- {
- }
- abstract public function reduceIteration()
- {
- }
+ abstract public function init();
+ abstract public function getMapValue($key);
+ abstract public function masterIteration();
+ abstract public function reduceIteration();
 }
