@@ -6,6 +6,7 @@ class IMemcacheClient_Lock
  public $time;
  public $repeats;
  public $interval;
+ public $acquired = FALSE;
  public function __construct($memcache,$id,$time = NULL,$repeats = NULL,$interval = NULL)
  {
   if ($time === NULL) {$time = 10;}
@@ -27,11 +28,14 @@ class IMemcacheClient_Lock
    sleep($this->interval);
    ++$i;
   }
+  if ($r) {$this->acquired = TRUE;}
   return $r;
  }
- public function release($d = 0)
+ public function release($d = 0,$force = FALSE)
  {
   if ($this->memcache->trace) {$this->memcache->trace_stack[] = array('release',$this->memcache->id,$d);}
+  if (!$this->acquired && !$force) {return FALSE;}
+  $this->acquired = FALSE;
   return $this->memcache->delete('lck.'.$id,$d);
  }
  public function isLocked($id)
