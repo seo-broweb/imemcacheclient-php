@@ -3,10 +3,11 @@ include dirname(__FILE__).'/init.php';
 echo "[masterd] started.\n";
 while (TRUE)
 {
- if (!$id = $mapreduce->masterIteration())
+ $ids = $mapreduce->masterIteration();
+ if (!sizeof($ids))
  {
   echo "[masterd] nothing to do sleep.\n";
   sleep(1);
  }
- else {echo "[masterd] iteration done (id = ".$id.").\n";}
+ else {echo "[masterd] iteration done (ids = ".implode(',',$id).").\n";}
 }
