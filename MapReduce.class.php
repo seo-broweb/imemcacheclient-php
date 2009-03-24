@@ -21,7 +21,10 @@ class MapReduce
   $job->mapreduce = $this;
   return $this->jobs[$job->name] = $job;
  }
- public function input($string) {return $this->mapqueue->push($string);}
+ public function input($job,$key)
+ {
+  return $this->mapqueue->push(json_encode($job,$key));
+ }
  public function masterIteration()
  {
   $r = FALSE;
@@ -33,12 +36,13 @@ class MapReduce
  }
  public function mapIteration()
  {
-  $key = $this->mapqueue->getNext();
-  if ($key)
+  $msg = $this->mapqueue->getNext();
+  if ($msg)
   {
-   $value = $this->job->getMapValue($key);
-   //var_dump(array('mapIteration',$key,$value));
-   $json = json_encode(array($key,$value));
+   list($job,$key) = json_decode($msg);
+   $value = $this->jobs[$job]->getMapValue($key);
+   var_dump(array('mapIteration',$job,$key,$value));
+   $json = json_encode(array($job,$key,$value));
    $this->reducequeue->push($json);
    return TRUE;
   }
@@ -48,8 +52,8 @@ class MapReduce
  {
   if ($item = $this->reducequeue->getNext())
   {
-   list ($key, $value) = json_decode($item);
-   $this->job->reduceIteration($key,$value);
+   list ($job, $key, $value) = json_decode($item);
+   $this->jobs[$job]->reduceIteration($key,$value);
    return TRUE;
   }
   return FALSE;
