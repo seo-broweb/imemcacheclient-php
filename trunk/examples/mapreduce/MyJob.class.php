@@ -5,10 +5,10 @@ class MyJob extends MapReduce_Job
  public $masterfp;
  public $path;
  public $name = 'MyJob';
- public function init()
+ public function __construct()
  {
   $this->path = dirname(__FILE__).'/example.txt';
-  echo "Job started.\n";
+  echo "Job 'MyJob' started.\n";
  }
  public function getMapValue($key)
  {
