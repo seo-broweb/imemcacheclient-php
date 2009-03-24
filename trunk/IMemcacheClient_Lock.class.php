@@ -18,13 +18,14 @@ class IMemcacheClient_Lock
   $this->repeats = $repeats;
   $this->interval = $interval;
  }
- public function acquire($primitive = FALSE)
+ public function acquire($repeats = NULL, $interval = NULL)
  {
+  if ($repeats === NULL) {$repeats = $this->repeats;}
+  if ($interval === NULL) {$interval = $this->interval;}
   if ($this->memcache->trace) {$this->memcache->trace_stack[] = array('acquire',$this->id,$this->time,$this->repeats,$this->interval);}
   $i = 0;
   while (!$r = $this->memcache->add('lck.'.$this->id,time(),$this->time))
   {
-   if ($primitive) {break;}
    if (($i >= $this->repeats) && ($this->repeats !== -1)) {break;}
    sleep($this->interval);
    ++$i;
