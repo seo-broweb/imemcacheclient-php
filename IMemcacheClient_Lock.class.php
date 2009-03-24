@@ -11,7 +11,7 @@ class IMemcacheClient_Lock
  {
   if ($time === NULL) {$time = 0;}
   if ($repeats === NULL) {$repeats = 0;}
-  if ($interval === NULL) {$interaval = 1;}
+  if ($interval === NULL) {$interval = 1;}
   $this->memcache = $memcache;
   $this->id = $id;
   $this->time = $time;
