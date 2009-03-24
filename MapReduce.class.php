@@ -23,16 +23,17 @@ class MapReduce
  }
  public function input($job,$key)
  {
-  return $this->mapqueue->push(json_encode(array($job,$key)));
+  $id = $this->mapqueue->push(json_encode(array($job,$key)));
+  return $id;
  }
  public function masterIteration()
  {
-  $r = FALSE;
+  $ids = array();
   foreach ($this->jobs as &$job)
   {
-   if ($job->masterIteration()) {$r = TRUE;}
+   if ($id = $job->masterIteration()) {$ids[] = $id;}
   }
-  return $r;
+  return $ids;
  }
  public function mapIteration()
  {
