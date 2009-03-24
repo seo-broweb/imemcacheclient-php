@@ -46,15 +46,36 @@ class IMemcacheClient_SharedObject
  {
   if (!isset($this->obj) || $nonCache)
   {
-   $o = $this->memcache->get('sho.'.$this->id);
-   $this->obj = ($o === FALSE)?FALSE:unserialize($o);
-   return $o !== FALSE;
+   $s = $this->memcache->get('sho.'.$this->id);
+   $this->obj = ($o === FALSE)?FALSE:$this->decode($s);
+   return $s !== FALSE;
   }
   return TRUE;
  }
+ public function append($s)
+ {
+  return $this->memcache->append('sho.'.$this->id,$this->encode($s));
+ }
+ public function prepend($s)
+ {
+  return $this->memcache->prepend('sho.'.$this->id,$this->encode($s));
+ }
+ public function decode($s)
+ {
+  if (substr($s,-1) == ',') {$s = substr($s,0,-1);}
+  return json_decode('{'.$s.'}');
+ }
+ public function encode($o)
+ {
+  $s = json_encode($o);
+  if ((substr($s,0,1) == '{') && (substr($s,-1) == '}')) {$s = substr($s,1,-1);}
+  elseif ((substr($s,0,1) == '[') && (substr($s,-1) == ']')) {$s = substr($s,1,-1);}
+  if ($s !== '') {$s .= ',';}
+  return $s;
+ }
  public function write()
  {
-  return $this->memcache->set('sho.'.$this->id,serialize($this->obj),$this->TTL);
+  return $this->memcache->set('sho.'.$this->id,$this->encode($this->obj),$this->TTL);
  }
  public function flush()
  {
