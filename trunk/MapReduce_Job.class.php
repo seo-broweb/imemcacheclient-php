@@ -3,9 +3,9 @@ class MapReduce_Job
 {
  public $name;
  public function __construct() {}
- public function input($a)
+ public function input($key)
  {
-  return $this->mapreduce->input($a);
+  return $this->mapreduce->input($this->name,$key);
  }
  //abstract public function init();
  //abstract public function getMapValue($key);
