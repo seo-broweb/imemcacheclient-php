@@ -38,6 +38,7 @@ class MyJob extends MapReduce_Job
  }
  public function reduceIteration($key,$value)
  {
+ var_dump($key);
   $a = explode("\n",$value);
   foreach ($a as &$s)
   {
