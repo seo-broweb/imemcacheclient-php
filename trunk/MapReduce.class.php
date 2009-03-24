@@ -23,7 +23,7 @@ class MapReduce
  }
  public function input($job,$key)
  {
-  return $this->mapqueue->push(json_encode($job,$key));
+  return $this->mapqueue->push(json_encode(array($job,$key)));
  }
  public function masterIteration()
  {
