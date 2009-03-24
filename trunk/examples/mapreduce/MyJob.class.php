@@ -13,6 +13,7 @@ class MyJob extends MapReduce_Job
  public function getMapValue($key)
  {
   preg_match_all('~\S+~u',$key,$w);
+  $c = array();
   foreach ($w[0] as $v)
   {
    if (!isset($c[$v])) {$c[$v] = 1;}
@@ -28,9 +29,8 @@ class MyJob extends MapReduce_Job
   if ($this->masterfp === NULL) {$this->masterfp = fopen($this->path,'r');}
   if (($line = fgets($this->masterfp)) !== FALSE)
   {
-   $this->input($line);
-   var_dump($line);
-   return TRUE;
+   $id = $this->input($line);
+   return $id;
   }
   $this->masterdone = TRUE;
   fclose($this->masterfp);

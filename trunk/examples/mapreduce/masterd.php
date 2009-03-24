@@ -9,5 +9,5 @@ while (TRUE)
   echo "[masterd] nothing to do sleep.\n";
   sleep(1);
  }
- else {echo "[masterd] iteration done (ids = ".implode(',',$id).").\n";}
+ else {echo "[masterd] iteration done (ids = ".implode(',',$ids).").\n";}
 }
