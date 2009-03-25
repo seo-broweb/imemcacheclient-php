@@ -90,7 +90,7 @@ class IMemcacheClient
  }
  public function add($k,$v,$e = 0)
  {
-  if ($this->trace) {$this->trace_stack[] = array('add',$k);}
+  if ($this->trace) {$this->trace_stack[] = array('add',$k,$e);}
   if ($this->conn instanceof Memcache) {return $this->conn->add($this->prefix.$k,$v,0,$e);}
   if ($e < 0) {$e = 0;}
   return $this->conn->add($this->prefix.$k,$v,$e);
