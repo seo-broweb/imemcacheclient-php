@@ -1,23 +1,26 @@
 <?php
-class IMemcacheClient_SharedObject
+class IMemcacheClient_SharedInteger
 {
  public $id;
  public $memcache;
  public $lock;
- public $obj;
+ public $int;
  public $TTL;
  public $interval = 0.3;
  public $repeats = 10;
- public $rewritable = TRUE;
- public function __construct($memcache,$id,$TTL = NULL,$rewritable = NULL)
+ public $rewritable;
+ public $initvalue;
+ public function __construct($memcache,$id,$initvalue = NULL,$TTL = NULL,$rewritable = NULL)
  {
   if ($TTL === NULL) {$TTL = 0;}
+  if ($initvalue === NULL) {$initvalue = 0;}
   if ($rewritable === NULL) {$rewritable = TRUE;}
   $this->memcache = $memcache;
   $this->id = $id;
   $this->TTL = $TTL;
   $this->rewritable = $rewritable;
-  $this->lock = $this->memcache->Lock('sho.'.$this->id,$this->TTL,$this->repeats,$this->interval);
+  $this->initvalue = $initvalue;
+  $this->lock = $this->memcache->Lock('shi.'.$this->id,$this->TTL,$this->repeats,$this->interval);
  }
  public function fetchInter()
  {
@@ -48,23 +51,32 @@ class IMemcacheClient_SharedObject
  }
  public function fetch($nonCache = FALSE)
  {
-  if (!isset($this->obj) || $nonCache)
+  if (!isset($this->int) || $nonCache)
   {
-   $s = $this->memcache->get('sho.'.$this->id);
-   $this->obj = ($o === FALSE)?FALSE:$this->decode($s);
-   return $s !== FALSE;
+   $s = $this->memcache->get('shi.'.$this->id);
+   $this->int = ($o === FALSE)?NULL:$s;
+   return $s !== NULL;
   }
   return TRUE;
  }
- public function append($s)
+ public function increment($n = 1)
  {
+  $k = 'shi.'.$this->id;
   if (!$this->rewritable)
   {
-   return $this->memcache->append('sho.'.$this->id,$this->encode($s));
+   if (($this->int = $this->memcache->increment($k,$n)) === FALSE)
+   {
+    $this->memcache->add($k,$this->initvalue,$this->TTL);
+   }
+   return $this->int = $this->memcache->increment($k,$n);
   }
   if ($this->lock->acquire())
   {
-   $r = $this->memcache->append('sho.'.$this->id,$this->encode($s));
+   if (($this->int = $this->memcache->increment($k,$n)) === FALSE)
+   {
+    $this->memcache->add($k,$this->initvalue,$this->TTL);
+   }
+   $r = $this->int = $this->memcache->increment($k,$n);
    $this->lock->release();
    return $r;
   }
@@ -74,11 +86,11 @@ class IMemcacheClient_SharedObject
  {
  if (!$this->rewritable)
   {
-   return $this->memcache->prepend('sho.'.$this->id,$this->encode($s));
+   return $this->memcache->prepend('shi.'.$this->id,$this->encode($s));
   }
   if ($this->lock->acquire())
   {
-   $r = $this->memcache->prepend('sho.'.$this->id,$this->encode($s));
+   $r = $this->memcache->prepend('shi.'.$this->id,$this->encode($s));
    $this->lock->release();
    return $r;
   }
@@ -99,7 +111,7 @@ class IMemcacheClient_SharedObject
  }
  public function write()
  {
-  return $this->memcache->set('sho.'.$this->id,$this->encode($this->obj),$this->TTL);
+  return $this->memcache->set('shi.'.$this->id,$this->encode($this->obj),$this->TTL);
  }
  public function flush()
  {
