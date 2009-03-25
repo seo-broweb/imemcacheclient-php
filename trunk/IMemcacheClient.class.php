@@ -131,4 +131,8 @@ class IMemcacheClient
  {
   return new IMemcacheClient_SharedObject($this,$id,$TTL);
  }
+ public function SharedInteger($id,$initvalue = NULL,$TTL = NULL)
+ {
+  return new IMemcacheClient_SharedInteger($this,$id,$initvalue,$TTL);
+ }
 }
