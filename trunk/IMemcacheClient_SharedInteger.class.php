@@ -22,6 +22,7 @@ class IMemcacheClient_SharedInteger
   $this->initvalue = $initvalue;
   $this->lock = $this->memcache->Lock('shi.'.$this->id,$this->TTL,$this->repeats,$this->interval);
  }
+ public function keepAlive($n) {return $this->memcache->delete('shi.'.$this->id,$n);}
  public function fetchInter()
  {
   if (!$this->rewritable) {return $this->fetch()?1:0;}
