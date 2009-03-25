@@ -12,11 +12,11 @@ class IMemcacheClient_SharedObject
  public function __construct($memcache,$id,$TTL = NULL,$rewritable = NULL)
  {
   if ($TTL === NULL) {$TTL = 0;}
-  if ($rewriteable === NULL) {$rewriteable = TRUE;}
+  if ($rewritable === NULL) {$rewritable = TRUE;}
   $this->memcache = $memcache;
   $this->id = $id;
   $this->TTL = $TTL;
-  $this->rewriteable = $rewriteable;
+  $this->rewritable = $rewritable;
   $this->lock = $this->memcache->Lock('sho.'.$this->id,$this->TTL,$this->repeats,$this->interval);
  }
  public function fetchInter()
@@ -57,7 +57,7 @@ class IMemcacheClient_SharedObject
  }
  public function append($s)
  {
-  if (!$this->rewriteable)
+  if (!$this->rewritable)
   {
    return $this->memcache->append('sho.'.$this->id,$this->encode($s));
   }
@@ -71,7 +71,7 @@ class IMemcacheClient_SharedObject
  }
  public function prepend($s)
  {
- if (!$this->rewriteable)
+ if (!$this->rewritable)
   {
    return $this->memcache->prepend('sho.'.$this->id,$this->encode($s));
   }
