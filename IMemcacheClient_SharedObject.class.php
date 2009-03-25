@@ -57,7 +57,7 @@ class IMemcacheClient_SharedObject
  }
  public function append($s)
  {
-  if (!$this->reloadable)
+  if (!$this->rewriteable)
   {
    return $this->memcache->append('sho.'.$this->id,$this->encode($s));
   }
@@ -71,7 +71,7 @@ class IMemcacheClient_SharedObject
  }
  public function prepend($s)
  {
- if (!$this->reloadable)
+ if (!$this->rewriteable)
   {
    return $this->memcache->prepend('sho.'.$this->id,$this->encode($s));
   }
