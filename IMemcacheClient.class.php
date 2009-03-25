@@ -67,7 +67,7 @@ class IMemcacheClient
  }
  public function delete($k,$t = 0)
  {
-  if ($this->trace) {$this->trace_stack[] = array('delete',$k);}
+  if ($this->trace) {$this->trace_stack[] = array('delete',$k,$t);}
   if ($t < 0) {$t = 0;}
   if (!is_array($k)) {return $this->conn->delete($this->prefix.$k,$t);}
   foreach ($k as $kk)
