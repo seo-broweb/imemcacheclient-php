@@ -127,12 +127,12 @@ class IMemcacheClient
  {
   return new IMemcacheClient_Lock($this,$id,$time,$repeats,$interval);
  }
- public function SharedObject($id,$TTL = NULL)
+ public function SharedObject($id,$TTL = NULL,$rewritable = NULL)
  {
-  return new IMemcacheClient_SharedObject($this,$id,$TTL);
+  return new IMemcacheClient_SharedObject($this,$id,$TTL,$rewritable);
  }
- public function SharedInteger($id,$initvalue = NULL,$TTL = NULL)
+ public function SharedInteger($id,$initvalue = NULL,$TTL = NULL,$rewritable = NULL)
  {
-  return new IMemcacheClient_SharedInteger($this,$id,$initvalue,$TTL);
+  return new IMemcacheClient_SharedInteger($this,$id,$initvalue,$TTL,$rewritable);
  }
 }
