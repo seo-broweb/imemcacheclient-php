@@ -14,7 +14,7 @@ class IMemcacheClient_SharedInteger
  {
   if ($TTL === NULL) {$TTL = 0;}
   if ($initvalue === NULL) {$initvalue = 0;}
-  if ($rewritable === NULL) {$rewritable = TRUE;}
+  if ($rewritable === NULL) {$rewritable = FALSE;}
   $this->memcache = $memcache;
   $this->id = $id;
   $this->TTL = $TTL;
