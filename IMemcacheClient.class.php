@@ -1,11 +1,11 @@
 <?php
-class IMemcacheClient
-{
 /*
     @class IMemcacheClient
     @package IMemcacheClient
     @author kak.serpom.po.yaitsam@gmail.com
 */
+class IMemcacheClient
+{
  public $prefix = '';
  public $trace_stack = array();
  public $trace = FALSE;
