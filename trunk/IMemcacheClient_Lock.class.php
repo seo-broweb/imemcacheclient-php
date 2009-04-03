@@ -1,4 +1,9 @@
 <?php
+/*
+    @class IMemcacheClient_Lock
+    @package IMemcacheClient
+    @author kak.serpom.po.yaitsam@gmail.com
+*/
 class IMemcacheClient_Lock
 {
  public $id;
@@ -7,6 +12,16 @@ class IMemcacheClient_Lock
  public $repeats;
  public $interval;
  public $acquired = FALSE;
+ /*
+    @method __construct
+    @param object $memcache parent object.
+    @param string $id ID of lock.
+    @param string $time=0 time to lock.
+    @param string $repeats=0 number of repeats of acquire().
+    @param string $interval=1 interval between repeats in seconds.
+    @description set option.
+    @return object.
+ */
  public function __construct($memcache,$id,$time = NULL,$repeats = NULL,$interval = NULL)
  {
   if ($time === NULL) {$time = 0;}
@@ -18,6 +33,12 @@ class IMemcacheClient_Lock
   $this->repeats = $repeats;
   $this->interval = $interval;
  }
+  /*
+    @method acquire()
+    @param 
+    @description acquire the lock.
+    @return object.
+ */
  public function acquire($repeats = NULL, $interval = NULL)
  {
   if ($repeats === NULL) {$repeats = $this->repeats;}
