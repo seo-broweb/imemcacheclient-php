@@ -65,10 +65,9 @@ class IMemcacheClient_SharedInteger
   $k = 'shi.'.$this->id;
   if (!$this->rewritable)
   {
-   if (($this->int = $this->memcache->increment($k,$n)) === FALSE)
-   {
-    $this->memcache->add($k,$this->initvalue,$this->TTL);
-   }
+   $this->int = $this->memcache->increment($k,$n);
+   if ($this->int !== FALSE) {return $this->int;}
+   $this->memcache->add($k,$this->initvalue,$this->TTL);
    return $this->int = $this->memcache->increment($k,$n);
   }
   if ($this->lock->acquire())

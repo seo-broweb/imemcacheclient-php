@@ -219,6 +219,12 @@ class IMemcacheClient
  */
  public function Queue($id,$exclusiveRead = NULL,$defaultItemTTL = NULL)
  {
+  static $loaded = FALSE;
+  if (!$loaded)
+  {
+   require_once dirname(__FILE__).'/IMemcacheClient_Queue.class.php';
+   $loaded = TRUE;
+  }
   return new IMemcacheClient_Queue($this,$id,$exclusiveRead,$defaultItemTTL);
  }
  /*
@@ -227,6 +233,12 @@ class IMemcacheClient
  */
  public function Lock($id,$time = NULL,$repeats = NULL,$interval = NULL)
  {
+  static $loaded = FALSE;
+  if (!$loaded)
+  {
+   require_once dirname(__FILE__).'/IMemcacheClient_Lock.class.php';
+   $loaded = TRUE;
+  }
   return new IMemcacheClient_Lock($this,$id,$time,$repeats,$interval);
  }
  /*
@@ -235,6 +247,12 @@ class IMemcacheClient
  */
  public function SharedObject($id,$TTL = NULL,$rewritable = NULL)
  {
+  static $loaded = FALSE;
+  if (!$loaded)
+  {
+   require_once dirname(__FILE__).'/IMemcacheClient_SharedObject.class.php';
+   $loaded = TRUE;
+  }
   return new IMemcacheClient_SharedObject($this,$id,$TTL,$rewritable);
  }
  /*
@@ -243,6 +261,12 @@ class IMemcacheClient
  */
  public function SharedInteger($id,$initvalue = NULL,$TTL = NULL,$rewritable = NULL)
  {
+  static $loaded = FALSE;
+  if (!$loaded)
+  {
+   require_once dirname(__FILE__).'/IMemcacheClient_SharedInteger.class.php';
+   $loaded = TRUE;
+  }
   return new IMemcacheClient_SharedInteger($this,$id,$initvalue,$TTL,$rewritable);
  }
 }
