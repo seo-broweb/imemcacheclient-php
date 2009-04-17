@@ -131,7 +131,7 @@ class IMemcacheClient
     if (isset($kk[1])) {$tt = $kk[1];}
     $kk = $kk[0];
    }
-   return $this->conn->delete($this->prefix.$kk,$tt);
+   $this->conn->delete($this->prefix.$kk,$tt);
   }
  }
  /*
