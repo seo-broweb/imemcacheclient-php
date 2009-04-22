@@ -148,7 +148,7 @@ class IMemcacheClient
   if ($e < 0) {$e = 0;}
   return $this->conn->set($this->prefix.$k,$v,$e);
  }
-  /*
+ /*
     @method add
     @param $key key to store
     @param $value value to store
