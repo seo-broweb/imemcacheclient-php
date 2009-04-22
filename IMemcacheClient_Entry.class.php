@@ -50,7 +50,7 @@ class IMemcacheClient_Entry
     }
    }
   }
-  return '*'.sprintf('%x',crc32(implode('|',$kk));
+  return '*'.sprintf('%x',crc32(implode('|',$kk)));
  }
  public function delete()
  {
