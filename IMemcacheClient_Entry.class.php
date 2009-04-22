@@ -39,14 +39,15 @@ class IMemcacheClient_Entry
   $p = 'tag.';
   $keys = array();
   foreach ($this->tags as &$v) {$keys[] = $p.$v;}
-  $kk = $this->memcache->getMulti($p.$v);
+  $kk = $this->memcache->getMulti($keys);
+  var_dump(array($keys,$kk));
   foreach ($this->tags as &$v)
   {
-   if (!isset($kk[$v]))
+   if (!isset($kk[$p.$v]))
    {
-    if (!$this->memcache->add($p.$v,$kk[$v] = microtime(TRUE)))
+    if (!$this->memcache->add($p.$v,$kk[$p.$v] = microtime(TRUE)))
     {
-     $kk[$v] = $this->memcache->get($p.$v);
+     $kk[$p.$v] = $this->memcache->get($p.$v);
     }
    }
   }
