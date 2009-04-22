@@ -40,7 +40,6 @@ class IMemcacheClient_Entry
   $keys = array();
   foreach ($this->tags as &$v) {$keys[] = $p.$v;}
   $kk = $this->memcache->getMulti($keys);
-  var_dump(array($keys,$kk));
   foreach ($this->tags as &$v)
   {
    if (!isset($kk[$p.$v]))
