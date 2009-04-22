@@ -250,6 +250,7 @@ class IMemcacheClient
   static $loaded = FALSE;
   if (!$loaded)
   {
+   require_once dirname(__FILE__).'/IMemcacheClient_Entry.class.php';
    require_once dirname(__FILE__).'/IMemcacheClient_SharedObject.class.php';
    $loaded = TRUE;
   }
@@ -264,6 +265,7 @@ class IMemcacheClient
   static $loaded = FALSE;
   if (!$loaded)
   {
+   require_once dirname(__FILE__).'/IMemcacheClient_Entry.class.php';
    require_once dirname(__FILE__).'/IMemcacheClient_SharedInteger.class.php';
    $loaded = TRUE;
   }

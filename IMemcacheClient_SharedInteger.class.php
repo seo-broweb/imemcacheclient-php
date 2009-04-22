@@ -1,5 +1,5 @@
 <?php
-class IMemcacheClient_SharedInteger
+class IMemcacheClient_SharedInteger extends IMemcacheClient_Entry
 {
  public $id;
  public $memcache;
@@ -22,7 +22,7 @@ class IMemcacheClient_SharedInteger
   $this->initvalue = $initvalue;
   $this->lock = $this->memcache->Lock('shi.'.$this->id,$this->TTL,$this->repeats,$this->interval);
  }
- public function keepAlive($n) {return $this->memcache->delete('shi.'.$this->id,$n);}
+ public function keepAlive($n) {return $this->memcache->delete('shi.'.$this->id.$this->getTagsID(),$n);}
  public function fetchInter()
  {
   if (!$this->rewritable) {return $this->fetch()?1:0;}
@@ -54,7 +54,7 @@ class IMemcacheClient_SharedInteger
  {
   if (!isset($this->int) || $nonCache)
   {
-   $s = $this->memcache->get('shi.'.$this->id);
+   $s = $this->memcache->get('shi.'.$this->id.$this->getTagsID());
    $this->int = ($o === FALSE)?NULL:$s;
    return $s !== NULL;
   }
@@ -62,7 +62,7 @@ class IMemcacheClient_SharedInteger
  }
  public function increment($n = 1)
  {
-  $k = 'shi.'.$this->id;
+  $k = 'shi.'.$this->id.$this->getTagsID();
   if (!$this->rewritable)
   {
    $this->int = $this->memcache->increment($k,$n);
@@ -84,7 +84,7 @@ class IMemcacheClient_SharedInteger
  }
  public function write()
  {
-  return $this->memcache->set('shi.'.$this->id,$this->int,$this->TTL);
+  return $this->memcache->set('shi.'.$this->id.$this->getTagsID(),$this->int,$this->TTL);
  }
  public function flush()
  {
