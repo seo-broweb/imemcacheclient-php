@@ -269,4 +269,22 @@ class IMemcacheClient
   }
   return new IMemcacheClient_SharedInteger($this,$id,$initvalue,$TTL,$rewritable);
  }
+ /*
+    @method Entry
+    @description get instance of Entry
+ */
+ public function Entry($id,$TTL = NULL)
+ {
+  static $loaded = FALSE;
+  if (!$loaded)
+  {
+   require_once dirname(__FILE__).'/IMemcacheClient_Entry.class.php';
+   $loaded = TRUE;
+  }
+  return new IMemcacheClient_Entry($this,$id,$TTL);
+ }
+ public function tagDelete($tag)
+ {
+  return $this->delete('tag.'.$tag);
+ }
 }
