@@ -82,36 +82,9 @@ class IMemcacheClient_SharedInteger
   }
   return FALSE;
  }
- public function prepend($s)
- {
- if (!$this->rewritable)
-  {
-   return $this->memcache->prepend('shi.'.$this->id,$this->encode($s));
-  }
-  if ($this->lock->acquire())
-  {
-   $r = $this->memcache->prepend('shi.'.$this->id,$this->encode($s));
-   $this->lock->release();
-   return $r;
-  }
-  return FALSE;
- }
- public function decode($s)
- {
-  if (substr($s,-1) == ',') {$s = substr($s,0,-1);}
-  return json_decode('{'.$s.'}');
- }
- public function encode($o)
- {
-  $s = json_encode($o);
-  if ((substr($s,0,1) == '{') && (substr($s,-1) == '}')) {$s = substr($s,1,-1);}
-  elseif ((substr($s,0,1) == '[') && (substr($s,-1) == ']')) {$s = substr($s,1,-1);}
-  if ($s !== '') {$s .= ',';}
-  return $s;
- }
  public function write()
  {
-  return $this->memcache->set('shi.'.$this->id,$this->encode($this->obj),$this->TTL);
+  return $this->memcache->set('shi.'.$this->id,$this->int,$this->TTL);
  }
  public function flush()
  {
