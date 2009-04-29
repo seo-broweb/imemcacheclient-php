@@ -13,6 +13,7 @@ class IMemcacheClient
  public $connector = 'memcached';
  public $pers_id = 'mem';
  public $compress = 0;
+ public $servers = array();
  public function __construct()
  {
   $this->prefix = SQL_DBNAME.'.'.SQL_TBLPREFIX.'.';
@@ -53,6 +54,7 @@ class IMemcacheClient
  */
  public function addServer($host,$port,$weight = NULL)
  {
+  $this->servers[] = array($host,$port,$weight);
   if ($this->conn instanceof Memcache) {return $this->conn->addServer($host,$port);}
   return $this->conn->addServer($host,$port,$weight);
  }
@@ -66,9 +68,10 @@ class IMemcacheClient
  {
   if ($this->conn instanceof Memcache)
   {
-   foreach ($a as $s) {$this->conn->addServer($s[0],$s[1],isset($s[2])?$s[2]:NULL);}
+   foreach ($a as $s) {$this->addServer($s[0],$s[1],isset($s[2])?$s[2]:NULL);}
    return TRUE;
   }
+  $this->servers = array_merge($this->servers,$a);
   return $this->conn->addServers($a);
  }
  /*
