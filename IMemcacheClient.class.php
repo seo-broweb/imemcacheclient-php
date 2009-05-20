@@ -22,6 +22,7 @@ class IMemcacheClient
   {
    $this->conn = new Memcached();
    $this->setOption(Memcached::OPT_COMPRESSION,$this->compress);
+   $this->setOption(Memcached::OPT_DISTRIBUTION,Memcached::OPT_LIBKETAMA_COMPATIBLE);
   }
  }
  /*
