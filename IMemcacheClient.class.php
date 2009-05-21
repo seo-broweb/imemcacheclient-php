@@ -16,7 +16,6 @@ class IMemcacheClient
  public $servers = array();
  public function __construct()
  {
-  $this->prefix = SQL_DBNAME.'.'.SQL_TBLPREFIX.'.';
   if ($this->connector === 'memcache') {$this->conn = new Memcache();}
   else
   {
