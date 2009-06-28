@@ -11,7 +11,6 @@ class Redis
  public function __construct() {}
  public function addServer($host,$port = NULL,$weight = NULL)
  {
- var_dump($host,$port);
   if ($port === NULL) {$port = $this->default_port;}
   $this->servers[$host.':'.$port] = $weight;
  }
