@@ -27,7 +27,7 @@ class Redis
  public function getConnectionByKey($key)
  {
   srand(crc32($key));
-  $addr = array_rand(array_keys($this->servers));
+  $addr = array_rand($this->servers);
   srand();  
   return $this->getConnection($addr);
  }
