@@ -10,18 +10,23 @@ class IMemcacheClient
  public $trace_stack = array();
  public $trace = FALSE;
  public $conn = NULL;
- public $connector = 'memcached';
+ public $type = 'memcache'; // memcache / redis
  public $pers_id = 'mem';
  public $compress = 0;
  public $servers = array();
- public function __construct()
+ public function __construct($type = NULL)
  {
-  if ($this->connector === 'memcache') {$this->conn = new Memcache();}
-  else
+  if ($type !== NULL) {$this->type = $type;}
+  if ($this->type === 'memcache')
   {
    $this->conn = new Memcached();
    $this->setOption(Memcached::OPT_COMPRESSION,$this->compress);
    $this->setOption(Memcached::OPT_DISTRIBUTION,Memcached::OPT_LIBKETAMA_COMPATIBLE);
+  }
+  elseif ($this->type === 'redis')
+  {
+   require dirname(__FILE__).'/Redis.class.php';
+   $this->conn = new Redis;
   }
  }
  /*
@@ -52,10 +57,9 @@ class IMemcacheClient
     @description add server.
     @return boolean
  */
- public function addServer($host,$port,$weight = NULL)
+ public function addServer($host,$port = NULL,$weight = NULL)
  {
   $this->servers[] = array($host,$port,$weight);
-  if ($this->conn instanceof Memcache) {return $this->conn->addServer($host,$port);}
   return $this->conn->addServer($host,$port,$weight);
  }
  /*
@@ -66,7 +70,7 @@ class IMemcacheClient
  */
  public function addServers($a)
  {
-  if ($this->conn instanceof Memcache)
+  if ($this->conn instanceof Redis)
   {
    foreach ($a as $s) {$this->addServer($s[0],$s[1],isset($s[2])?$s[2]:NULL);}
    return TRUE;
@@ -93,7 +97,6 @@ class IMemcacheClient
  public function flush($delay = 0)
  {
   if ($this->trace) {$this->trace_stack[] = array('flush',$delay);}
-  if ($this->conn instanceof Memcache) {return $this->conn->flush();}
   return $this->conn->flush($delay);
  }
  /*
@@ -147,7 +150,6 @@ class IMemcacheClient
  public function set($k,$v,$e = 0)
  {
   if ($this->trace) {$this->trace_stack[] = array('set',$k,$e);}
-  if ($this->conn instanceof Memcache) {return $this->conn->set($this->prefix.$k,$v,0,$e);}
   if ($e < 0) {$e = 0;}
   return $this->conn->set($this->prefix.$k,$v,$e);
  }
@@ -161,7 +163,6 @@ class IMemcacheClient
  public function add($k,$v,$e = 0)
  {
   if ($this->trace) {$this->trace_stack[] = array('add',$k,$e);}
-  if ($this->conn instanceof Memcache) {return $this->conn->add($this->prefix.$k,$v,0,$e);}
   if ($e < 0) {$e = 0;}
   return $this->conn->add($this->prefix.$k,$v,$e);
  }
