@@ -134,7 +134,6 @@ class Redis
  }
  public function set($key,$value,$TTL = NULL)
  {
- vd(array($key,$value,$TTL));
   $r = $this->requestByKey($key,'SET '.$key);
   if ($TTL !== NULL) {$this->expire($key,$TTL);}
   return $r;
