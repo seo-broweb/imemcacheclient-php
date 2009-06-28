@@ -130,11 +130,14 @@ class Redis
  }
  public function get($key)
  {
-  return $this->requestByKey($key,'GET '.$key);
+  $r = $this->requestByKey($key,'GET '.$key);
+  $r = json_decode($r);
+  return $r;
  }
  public function set($key,$value,$TTL = NULL)
  {
-  $r = $this->requestByKey($key,'SET '.$key);
+  if (!is_scalar($value)) {$value = json_encode($value);}
+  $r = $this->requestByKey($key,'SET '.$key.' '.strlen($value)."\r\n".$value);
   if ($TTL !== NULL) {$this->expire($key,$TTL);}
   return $r;
  }
@@ -148,7 +151,8 @@ class Redis
  }
  public function add($key,$value,$TTL = 0)
  {
-  $r = $this->requestByKey($key,'SETNX '.$key);
+  if (!is_scalar($value)) {$value = json_encode($value);}
+  $r = $this->requestByKey($key,'SETNX '.$key.' '.strlen($value)."\r\n".$value);
   if ($TTL > 0) {$this->expire($key,$TTL);}
   return $r;
  }
