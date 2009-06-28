@@ -17,7 +17,8 @@ class Redis
  public function getConnection($addr)
  {
   if (isset($this->connections[$addr])) {return $this->connections[$addr];}
-  if ($conn = fsockopen('tcp://'.$addr))
+  if (strpos($addr,'://') === FALSE) {$addr = 'tcp://'.$addr;}
+  if ($conn = fsockopen($addr))
   {
    $this->connections[$addr] = $conn;
    return $addr;
@@ -29,16 +30,12 @@ class Redis
   srand(crc32($key));
   $addr = array_rand($this->servers);
   srand();  
-  return $this->getConnection($addr);
+  $this->getConnection($addr);
+  return $addr;
  }
  public function write($k,$s)
  {
-  while ($s !== '')
-  {
-   $i = fwrite($this->connections[$k],$s);
-   if ($i == 0) {break;}
-   $s = substr($s,$i);
-  }
+  fwrite($this->connections[$k],$s);
  }
  public function requestByServer($k,$s)
  {
@@ -65,10 +62,16 @@ class Redis
  {
   $k = $this->getConnectionByKey($k);
   $this->write($k,$s."\r\n");
-  return $this->getResponse($k);
+  $r = $this->getResponse($k);
+  return $r;
  }
- public function read($k,$len = 1024)
+ public function read($k,$len = NULL)
  {
+  if ($len === NULL)
+  {
+   if (($s = fgets($this->connections[$k])) !== FALSE) {return $s;}
+   return FALSE;
+  }
   if (($s = fread($this->connections[$k],$len)) !== FALSE) {return $s;}
   fclose($this->connections[$k]);
   unset($this->connections[$k]);
@@ -131,14 +134,15 @@ class Redis
  public function get($key)
  {
   $r = $this->requestByKey($key,'GET '.$key);
-  $r = json_decode($r);
-  return $r;
+  if ($r === NULL) {return FALSE;}
+  return json_decode($r,TRUE);
  }
  public function set($key,$value,$TTL = NULL)
  {
   if (!is_scalar($value)) {$value = json_encode($value);}
   $r = $this->requestByKey($key,'SET '.$key.' '.strlen($value)."\r\n".$value);
   if ($TTL !== NULL) {$this->expire($key,$TTL);}
+  if ($r === NULL) {return FALSE;}
   return $r;
  }
  public function expire($key,$TTL = 0)
