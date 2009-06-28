@@ -17,8 +17,9 @@ class Redis
  public function getConnection($addr)
  {
   if (isset($this->connections[$addr])) {return $this->connections[$addr];}
-  if (strpos($addr,'://') === FALSE) {$addr = 'tcp://'.$addr;}
-  if ($conn = fsockopen($addr))
+  if (strpos($addr,'://') === FALSE) {$path = 'tcp://'.$addr;}
+  else {$path = $addr;}
+  if ($conn = fsockopen($path))
   {
    $this->connections[$addr] = $conn;
    return $addr;
