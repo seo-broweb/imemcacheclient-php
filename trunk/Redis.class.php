@@ -2,6 +2,7 @@
 /*
     @class Redis
     @package IMemcacheClient
+    @url http://code.google.com/p/imemcacheclient-php/
     @author kak.serpom.po.yaitsam@gmail.com
     @description Connector for Redis (http://code.google.com/p/redis/)
     @license LGPL, BSD-compabible. Adding to the Redis repository permitted.
@@ -10,6 +11,7 @@ class Redis
 {
  public $servers = array();
  public $default_port = 6379;
+ public $dtags_enabled = TRUE;
  public $connections = array();
  public function __construct() {}
  public function addServer($host,$port = NULL,$weight = NULL)
@@ -31,6 +33,10 @@ class Redis
  }
  public function getConnectionByKey($key)
  {
+  if (($this->dtags_enabled) && (($sp = strpos($key,'[')) !== FALSE) && (($ep = strpos($key,']')) !== FALSE) && ($ep > $sp))
+  {
+   $key = substr($key,$sp+1,$ep-$sp-1);
+  }
   srand(crc32($key));
   $addr = array_rand($this->servers);
   srand();  
