@@ -352,7 +352,7 @@ class Redis
     $_v = strpos($v, '.') !== false ? (float)$v : (int)$v;
     $info[$k] = (string)$_v == $v ? $_v : $v;
    }
-   $result[$srv] = $inf;
+   $result[$srv] = $info;
   }
   return $result;
  }
