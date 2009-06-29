@@ -1,7 +1,10 @@
 <?php
-/*******************************************************************************
- * Redis - http://code.google.com/p/redis/
- *******************************************************************************
+/*
+    @class Redis
+    @package IMemcacheClient
+    @author kak.serpom.po.yaitsam@gmail.com
+    @description Connector for Redis (http://code.google.com/p/redis/)
+    @license LGPL, BSD-compabible
 */
 class Redis
 {

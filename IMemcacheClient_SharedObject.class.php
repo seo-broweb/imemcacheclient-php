@@ -1,4 +1,9 @@
 <?php
+/*
+    @class IMemcacheClient_SharedObject
+    @package IMemcacheClient
+    @author kak.serpom.po.yaitsam@gmail.com
+*/
 class IMemcacheClient_SharedObject
 {
  public $id;
