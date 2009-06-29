@@ -193,12 +193,12 @@ class Redis
  }
  public function increment($key,$number = 1)
  {
-  if ($amount == 1) {return $this->requestByKey($key,'INCR '.$key);}
+  if ($number == 1) {return $this->requestByKey($key,'INCR '.$key);}
   return $this->requestByKey($key,'INCRBY '.$key.' '.$number);
  }
  public function decrement($key,$number = 1)
  {
-  if ($amount == 1) {return $this->requestByKey($key,'DECR '.$key);}
+  if ($number == 1) {return $this->requestByKey($key,'DECR '.$key);}
   return $this->requestByKey($key,'DECRBY '.$key.' '.$number);
  }
  public function exists($key)
