@@ -1,4 +1,9 @@
 <?php
+/*
+    @class MapReduce
+    @package IMemcacheClient
+    @author kak.serpom.po.yaitsam@gmail.com
+*/
 class MapReduce
 {
  public $mapqueue;

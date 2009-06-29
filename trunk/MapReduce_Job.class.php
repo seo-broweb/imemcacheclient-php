@@ -1,4 +1,9 @@
 <?php
+/*
+    @class MapReduce_Job
+    @package IMemcacheClient
+    @author kak.serpom.po.yaitsam@gmail.com
+*/
 class MapReduce_Job
 {
  public $name;

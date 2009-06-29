@@ -1,4 +1,9 @@
 <?php
+/*
+    @class IMemcacheClient_Queue
+    @package IMemcacheClient
+    @author kak.serpom.po.yaitsam@gmail.com
+*/
 class IMemcacheClient_Queue
 {
  public $memcache;
