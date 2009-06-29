@@ -58,8 +58,9 @@ class Redis
     $this->write($k,$s."\r\n");
     $result[$k] = $this->getResponse($k);
    }
+   return $result;
   }
-  elseif ($k === NULL)
+  if ($k === NULL)
   {
    srand();
    $k = array_rand(array_keys($this->servers));
