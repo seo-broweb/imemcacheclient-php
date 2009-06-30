@@ -193,7 +193,10 @@ class IMemcacheClient
  public function keys($k,$s = NULL)
  {
   if ($this->trace) {$this->trace_stack[] = array('keys',$k);}
-  return $this->conn->keys($this->prefix.$k,$s);
+  $r = $this->conn->keys($this->prefix.$k,$s);
+  $l = strlen($this->prefix);
+  foreach ($r as &$k) {$k = substr($k,$l);}
+  return $r;
  }
  /*
     @method prepend
@@ -241,6 +244,20 @@ class IMemcacheClient
    $loaded = TRUE;
   }
   return new IMemcacheClient_Queue($this,$id,$exclusiveRead,$defaultItemTTL);
+ }
+ /*
+    @method getList
+    @description get instance of List.
+ */
+ public function getList($id,$defaultItemTTL = NULL)
+ {
+  static $loaded = FALSE;
+  if (!$loaded)
+  {
+   require_once dirname(__FILE__).'/IMemcacheClient_List.class.php';
+   $loaded = TRUE;
+  }
+  return new IMemcacheClient_List($this,$id,$defaultItemTTL);
  }
  /*
     @method Lock
