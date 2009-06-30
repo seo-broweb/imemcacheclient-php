@@ -177,14 +177,32 @@ class Redis
  {
   return $this->requestByServer($server,'ECHO '.strlen($s)."\r\n".$s);
  }
- public function getMulti($keys,$bykey = NULL)
+ public function getMultiByKey($keys,$bykey)
  {
-  if ($bykey !== NULL) {return $this->requestByKey($bykey,'MGET '.implode(' ',$keys));}
+  return $this->getMulti($keys,$this->getConnectionByKey($bykey));
+ }
+ public function getMulti($keys,$byserver = NULL)
+ {
+  if ($byserver !== NULL)
+  {
+   $result = array();
+   $values = $this->requestByServer($byserver,'MGET '.implode(' ',$keys));
+   $i = 0;
+   foreach ($keys as &$k) {$result[$k] = json_decode($values[$i++],TRUE);}
+   return $result;
+  }
+  elseif (sizeof($this->servers) <= 0) {return $this->getMulti($keys,end(array_keys($this->servers)));}
   else
   {
-   // need grouping optimization
    $result = array();
-   foreach ($keys as $k) {$result[$k] = $this->get($k);}
+   $batch = array();
+   foreach ($keys as $k)
+   {
+    $addr = $this->getConnectionByKey($k);
+    if (!isset($batch[$addr])) {$batch[$addr] = array();}
+    $batch[$addr][] = $k;
+   }
+   foreach ($batch as $s => $b) {$result = array_merge($result,$this->getMulti($b,$s));}
    return $result;
   }
  }

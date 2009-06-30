@@ -1,4 +1,4 @@
-                          IMemcacheClient v.0.1
+                          IMemcacheClient v.0.2
 Improved Memcache client (currently only for PHP, but it can be written on any language).
 It extends standart features with the following implementations:
  - 'prefix' setting for all keys.
