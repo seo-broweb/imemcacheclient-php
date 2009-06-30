@@ -45,7 +45,16 @@ class Redis
  }
  private function read($k,$len = NULL)
  {
-  return ($len === NULL)?fgets($this->pool[$k]):fread($this->pool[$k],$len);
+  if ($len === 0) {return '';}
+  if ($len === NULL) {return fgets($this->pool[$k]);}
+  $r = '';
+  for (;;)
+  {
+   $l = strlen($r);
+   if ($l >= $len) {break;}
+   $r .= fread($this->pool[$k],min($len-$l,1024));
+  }
+  return $r;
  }
  private function write($k,$s)
  {
@@ -201,9 +210,11 @@ class Redis
  {
   return $this->requestByKey($key,'TYPE '.$key);
  }
- public function keys($pattern,$server = NULL)
+ public function keys($pattern,$server = '')
  {
-  return $this->requestByServer($server,'KEYS '.$pattern);
+  if ($server === '') {$r = $this->requestByKey($pattern,'KEYS '.$pattern);}
+  else {$r = $this->requestByServer($server,'KEYS '.$pattern);}
+  return explode(' ',$r);
  }
  public function randomKey($server = NULL)
  {
