@@ -12,26 +12,26 @@ class Redis
  public $servers = array();
  public $default_port = 6379;
  public $dtags_enabled = TRUE;
- public $connections = array();
+ public $pool = array();
  public function __construct() {}
  public function addServer($host,$port = NULL,$weight = NULL)
  {
   if ($port === NULL) {$port = $this->default_port;}
   $this->servers[$host.':'.$port] = $weight;
  }
- public function getConnection($addr)
+ private function getConnection($addr)
  {
-  if (isset($this->connections[$addr])) {return $this->connections[$addr];}
+  if (isset($this->pool[$addr])) {return $this->pool[$addr];}
   if (strpos($addr,'://') === FALSE) {$path = 'tcp://'.$addr;}
   else {$path = $addr;}
   if ($conn = fsockopen($path))
   {
-   $this->connections[$addr] = $conn;
+   $this->pool[$addr] = $conn;
    return $addr;
   }
   return FALSE;
  }
- public function getConnectionByKey($key)
+ private function getConnectionByKey($key)
  {
   if (($this->dtags_enabled) && (($sp = strpos($key,'[')) !== FALSE) && (($ep = strpos($key,']')) !== FALSE) && ($ep > $sp))
   {
@@ -43,9 +43,13 @@ class Redis
   $this->getConnection($addr);
   return $addr;
  }
- public function write($k,$s)
+ private function read($k,$len = NULL)
  {
-  fwrite($this->connections[$k],$s);
+  return ($len === NULL)?fgets($this->pool[$k]):fread($this->pool[$k],$len);
+ }
+ private function write($k,$s)
+ {
+  return fwrite($this->pool[$k],$s);
  }
  public function requestByServer($k,$s)
  {
@@ -76,20 +80,15 @@ class Redis
   $r = $this->getResponse($k);
   return $r;
  }
- public function read($k,$len = NULL)
+ private function disconnect($k)
  {
-  if ($len === NULL)
-  {
-   if (($s = fgets($this->connections[$k])) !== FALSE) {return $s;}
-   return FALSE;
-  }
-  if (($s = fread($this->connections[$k],$len)) !== FALSE) {return $s;}
-  fclose($this->connections[$k]);
-  unset($this->connections[$k]);
-  $this->connections = array_values($this->connections);
-  return FALSE;
+  if (!isset($this->pool[$k])) {return FALSE;}
+  fclose($this->pool[$k]);
+  unset($this->pool[$k]);
+  $this->pool = array_values($this->pool);
+  return TRUE;
  }
- public function getResponse($k)
+ private function getResponse($k)
  {
   if (($data = $this->read($k)) === FALSE) {return FALSE;}
   $c = $data[0];
