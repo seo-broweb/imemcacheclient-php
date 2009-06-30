@@ -67,7 +67,7 @@ class Redis
   if ($k === NULL)
   {
    srand();
-   $k = array_rand(array_keys($this->servers));
+   $k = array_rand($this->servers);
   }
   $this->getConnection($k);
   $this->write($k,$s."\r\n");
