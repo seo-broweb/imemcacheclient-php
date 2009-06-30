@@ -118,7 +118,7 @@ class Redis
  }
  private function getBulkReply($k,$data)
  {
-  if ($data === NULL) {$data = trim($this->read($k));}
+  if ($data === NULL) {$data = rtrim($this->read($k));}
   if ($data == '$-1') {return NULL;}
   if ($data[0] != '$') {trigger_error('Unknown response prefix for \''.$c.$data.'\'', E_USER_WARNING); return FALSE;}
   $data = $this->read($k,(int) substr($data,1));
@@ -222,7 +222,7 @@ class Redis
  }
  public function push($key,$value,$right = TRUE)
  {
-  return $this->requestByKey($key,($right?'RPUSH':'LPUSH').' '.$key.' '.$value);
+  return $this->requestByKey($key,($right?'RPUSH':'LPUSH').' '.$key.' '.strlen($value)."\r\n".$value);
  }
  public function lpush($key,$value)
  {
@@ -231,6 +231,18 @@ class Redis
  public function rpush($key,$value)
  {
   return $this->push($key,$value,TRUE);
+ }
+ public function cpush($maxsize,$key,$value,$right = TRUE)
+ {
+  return $this->requestByKey($key,($right?'CRPUSH':'CLPUSH').' '.$maxsize.' '.$key.' '.strlen($value)."\r\n".$value);
+ }
+ public function clpush($maxsize,$key,$value)
+ {
+  return $this->cpush($maxsize,$key,$value,FALSE);
+ }
+ public function crpush($maxsize,$key,$value)
+ {
+  return $this->cpush($maxsize,$key,$value,TRUE);
  }
  public function ltrim($key,$start,$end)
  {
