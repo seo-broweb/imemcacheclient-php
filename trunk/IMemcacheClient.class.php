@@ -185,6 +185,17 @@ class IMemcacheClient
   return $this->conn->append($this->prefix.$k,$v);
  }
  /*
+    @method keys
+    @param $pattern
+    @param $server
+    @description get keys by wildcard
+ */
+ public function keys($k,$s = NULL)
+ {
+  if ($this->trace) {$this->trace_stack[] = array('keys',$k);}
+  return $this->conn->keys($this->prefix.$k,$s);
+ }
+ /*
     @method prepend
     @param $key prepeding key.
     @param $value string to prepend
