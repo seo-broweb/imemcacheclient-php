@@ -93,26 +93,23 @@ class Redis
  {
   if (($data = $this->read($k)) === FALSE) {return FALSE;}
   $c = $data[0];
-  $data = substr($data, 1);
+  $data = substr($data,1);
   if (substr($data,-2) == "\r\n") {$data = substr($data,0,-2);}
   switch ($c)
   {
    case '-':
-    trigger_error($data, E_USER_ERROR);
+    trigger_error($data, E_USER_WARNING);
     return FALSE;
    case '+':
     return $data;
    case ':':
-    $i = strpos($data, '.') !== false ? (int)$data : (float)$data;
-    if ((string)$i != $data) {trigger_error("Cannot convert data '$c$data' to integer", E_USER_ERROR);}
-    return $i;
+    return strpos($data, '.') !== FALSE ? (int)$data : (float)$data;
    case '$':
     return $this->getBulkReply($k,$c.$data);
    case '*':
     $num = (int)$data;
-    if ((string)$num != $data) {trigger_error("Cannot convert multi-response header '$data' to integer", E_USER_ERROR);}
     $result = array();
-    for ($i = 0; $i < $num; ++$i) {$result[] = &$this->getResponse($k);}
+    for ($i = 0; $i < $num; ++$i) {$result[] = $this->getResponse($k);}
     return $result;
    default:
     trigger_error("Invalid reply type byte: '$c'");
@@ -123,20 +120,11 @@ class Redis
  {
   if ($data === NULL) {$data = trim($this->read($k));}
   if ($data == '$-1') {return NULL;}
-  $c = $data[0];
-  $data = substr($data, 1);
-  $bulklen = (int)$data;
-  if ((string)$bulklen != $data) {trigger_error("Cannot convert bulk read header '$c$data' to integer", E_USER_ERROR);}
-  if ($c != '$') {trigger_error("Unkown response prefix for '$c$data'", E_USER_ERROR);}
-  $buffer = '';
-  while ($bulklen) 
-  {
-   $data = $this->read($k,$bulklen);
-   $bulklen -= strlen($data);
-   $buffer .= $data;
-  }
-  $crlf = $this->read($k,2);
-  return $buffer;
+  if ($data[0] != '$') {trigger_error('Unknown response prefix for \''.$c.$data.'\'', E_USER_WARNING); return FALSE;}
+  $data = $this->read($k,(int) substr($data,1));
+  $end = $this->read($k,2);
+  if ($end != "\r\n") {trigger_error('Unknown response end: \''.$end.'\'', E_USER_WARNING); return FALSE;}
+  return $data;
  }
  public function ping($server = NULL)
  {
