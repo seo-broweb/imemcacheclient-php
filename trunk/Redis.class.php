@@ -138,15 +138,15 @@ class Redis
  {
   return $this->requestByServer($server,'PING');
  }
- public function get($key)
+ public function get($key,$plain = FALSE)
  {
   $r = $this->requestByKey($key,'GET '.$key);
   if ($r === NULL) {return FALSE;}
-  return json_decode($r,TRUE);
+  return $plain?$r:json_decode($r,TRUE);
  }
- public function set($key,$value,$TTL = NULL)
+ public function set($key,$value,$TTL = NULL,$plain = FALSE)
  {
-  if (!is_scalar($value)) {$value = json_encode($value);}
+  if (!$plain) {$value = json_encode($value);}
   $r = $this->requestByKey($key,'SET '.$key.' '.strlen($value)."\r\n".$value);
   if ($TTL !== NULL) {$this->expire($key,$TTL);}
   if ($r === NULL) {return FALSE;}
@@ -160,17 +160,17 @@ class Redis
  {
   return $this->requestByKey($key,'TTL '.$key);
  }
- public function add($key,$value,$TTL = 0)
+ public function add($key,$value,$TTL = 0,$plain = FALSE)
  {
-  if (!is_scalar($value)) {$value = json_encode($value);}
+  if (!$plain) {$value = json_encode($value);}
   $r = $this->requestByKey($key,'SETNX '.$key.' '.strlen($value)."\r\n".$value);
   if ($TTL > 0) {$this->expire($key,$TTL);}
   return $r;
  }
- public function replace($key,$value,$TTL = 0) // not complete atomic
+ public function replace($key,$value,$TTL = 0,$plain = FALSE) // not complete atomic
  {
   if (!$this->exists($key)) {return FALSE;}
-  $this->set($key,$value,$TTL);
+  $this->set($key,$value,$TTL,$plain);
   return TRUE;
  }
  public function sendEcho($server = NULL,$s)
