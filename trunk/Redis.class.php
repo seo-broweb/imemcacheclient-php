@@ -144,9 +144,9 @@ class Redis
   if ($r === NULL) {return FALSE;}
   return $plain?$r:json_decode($r,TRUE);
  }
- public function set($key,$value,$TTL = NULL,$plain = FALSE)
+ public function set($key,$value,$TTL = NULL)
  {
-  if (!$plain) {$value = json_encode($value);}
+  if (!is_scalar($value)) {$value = json_encode($value);}
   $r = $this->requestByKey($key,'SET '.$key.' '.strlen($value)."\r\n".$value);
   if ($TTL !== NULL) {$this->expire($key,$TTL);}
   if ($r === NULL) {return FALSE;}
@@ -160,17 +160,17 @@ class Redis
  {
   return $this->requestByKey($key,'TTL '.$key);
  }
- public function add($key,$value,$TTL = 0,$plain = FALSE)
+ public function add($key,$value,$TTL = 0)
  {
-  if (!$plain) {$value = json_encode($value);}
+  if (!is_scalar($value)) {$value = json_encode($value);}
   $r = $this->requestByKey($key,'SETNX '.$key.' '.strlen($value)."\r\n".$value);
   if ($TTL > 0) {$this->expire($key,$TTL);}
   return $r;
  }
- public function replace($key,$value,$TTL = 0,$plain = FALSE) // not complete atomic
+ public function replace($key,$value,$TTL = 0) // not complete atomic
  {
   if (!$this->exists($key)) {return FALSE;}
-  $this->set($key,$value,$TTL,$plain);
+  $this->set($key,$value,$TTL);
   return TRUE;
  }
  public function sendEcho($server = NULL,$s)
