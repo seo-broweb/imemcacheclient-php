@@ -84,9 +84,10 @@ class IMemcacheClient
     @description get key from server.
     @return mixed
  */
- public function get($k)
+ public function get($k,$plain = FALSE)
  {
   if ($this->trace) {$this->trace_stack[] = array('get',$k);}
+  if ($this->conn instanceof Redis) {$this->conn->get($this->prefix.$k,$plain);}
   return $this->conn->get($this->prefix.$k);
  }
  /*
