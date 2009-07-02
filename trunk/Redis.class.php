@@ -333,7 +333,7 @@ class Redis
  {
   return $this->requestByKey($bykey,'SINTERSTORE '.$bykey.' '.implode(' ',$keys));
  }
- public function sismembers($key)
+ public function smembers($key)
  {
   return $this->requestByKey($key,'SMEMBERS '.$key);
  }
