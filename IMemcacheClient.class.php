@@ -87,7 +87,7 @@ class IMemcacheClient
  public function get($k,$plain = FALSE)
  {
   if ($this->trace) {$this->trace_stack[] = array('get',$k);}
-  if ($this->conn instanceof Redis) {$this->conn->get($this->prefix.$k,$plain);}
+  if ($this->conn instanceof Redis) {return $this->conn->get($this->prefix.$k,$plain);}
   return $this->conn->get($this->prefix.$k);
  }
  /*

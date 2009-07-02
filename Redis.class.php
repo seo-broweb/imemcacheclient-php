@@ -315,15 +315,15 @@ class Redis
  
  public function sadd($key,$value)
  {
-  return $this->requestByKey($key,'SADD '.$key.''.strlen($value)."\r\n".$value);
+  return $this->requestByKey($key,'SADD '.$key.' '.strlen($value)."\r\n".$value);
  }
  public function srem($key,$value)
  {
-  return $this->requestByKey($key,'SREM '.$key.''.strlen($value)."\r\n".$value);
+  return $this->requestByKey($key,'SREM '.$key.' '.strlen($value)."\r\n".$value);
  }
  public function sismember($key,$value)
  {
-  return $this->requestByKey($key,'SISMEMBER '.$key.''.strlen($value)."\r\n".$value);
+  return $this->requestByKey($key,'SISMEMBER '.$key.' '.strlen($value)."\r\n".$value);
  }
  public function sinter($keys,$bykey)
  {
