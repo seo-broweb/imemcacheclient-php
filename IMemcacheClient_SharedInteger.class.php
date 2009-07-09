@@ -60,8 +60,8 @@ class IMemcacheClient_SharedInteger extends IMemcacheClient_Entry
   if (!isset($this->int) || $nonCache)
   {
    $s = $this->memcache->get('shi.'.$this->id.$this->getTagsID());
-   $this->int = ($o === FALSE)?NULL:$s;
-   return $s !== NULL;
+   $this->int = ($s === FALSE)?NULL:$s;
+   return $this->int !== NULL;
   }
   return TRUE;
  }
