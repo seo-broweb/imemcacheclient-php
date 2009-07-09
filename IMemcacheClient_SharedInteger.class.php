@@ -72,14 +72,14 @@ class IMemcacheClient_SharedInteger extends IMemcacheClient_Entry
   {
    $this->int = $this->memcache->increment($k,$n);
    if ($this->int !== FALSE) {return $this->int;}
-   $this->memcache->add($k,$this->initvalue,$this->TTL);
+   $this->memcache->add($k,is_callable($this->initvalue)?call_user_func($this->initvalue,$this):$this->initvalue,$this->TTL);
    return $this->int = $this->memcache->increment($k,$n);
   }
   if ($this->lock->acquire())
   {
    if (($this->int = $this->memcache->increment($k,$n)) === FALSE)
    {
-    $this->memcache->add($k,$this->initvalue,$this->TTL);
+    $this->memcache->add($k,is_callable($this->initvalue)?call_user_func($this->initvalue,$this):$this->initvalue,$this->TTL);
    }
    $r = $this->int = $this->memcache->increment($k,$n);
    $this->lock->release();
