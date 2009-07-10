@@ -61,7 +61,7 @@ class IMemcacheClient_SharedInteger extends IMemcacheClient_Entry
   {
    $s = $this->memcache->get('shi.'.$this->id.$this->getTagsID());
    $this->int = ($s === FALSE)?NULL:$s;
-   return $this->int !== NULL;
+   return $s !== FALSE;
   }
   return TRUE;
  }
@@ -82,6 +82,28 @@ class IMemcacheClient_SharedInteger extends IMemcacheClient_Entry
     $this->memcache->add($k,is_callable($this->initvalue)?call_user_func($this->initvalue,$this):$this->initvalue,$this->TTL);
    }
    $r = $this->int = $this->memcache->increment($k,$n);
+   $this->lock->release();
+   return $r;
+  }
+  return FALSE;
+ }
+ public function decrement($n = 1)
+ {
+  $k = 'shi.'.$this->id.$this->getTagsID();
+  if (!$this->rewritable)
+  {
+   $this->int = $this->memcache->decrement($k,$n);
+   if ($this->int !== FALSE) {return $this->int;}
+   $this->memcache->add($k,is_callable($this->initvalue)?call_user_func($this->initvalue,$this):$this->initvalue,$this->TTL);
+   return $this->int = $this->memcache->decrement($k,$n);
+  }
+  if ($this->lock->acquire())
+  {
+   if (($this->int = $this->memcache->decrement($k,$n)) === FALSE)
+   {
+    $this->memcache->add($k,is_callable($this->initvalue)?call_user_func($this->initvalue,$this):$this->initvalue,$this->TTL);
+   }
+   $r = $this->int = $this->memcache->decrement($k,$n);
    $this->lock->release();
    return $r;
   }
