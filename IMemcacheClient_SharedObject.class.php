@@ -56,7 +56,7 @@ class IMemcacheClient_SharedObject
   if (!isset($this->obj) || $nonCache)
   {
    $s = $this->memcache->get('sho.'.$this->id);
-   $this->obj = ($o === FALSE)?FALSE:$this->decode($s);
+   $this->obj = ($s === FALSE)?FALSE:$this->decode($s);
    return $s !== FALSE;
   }
   return TRUE;
