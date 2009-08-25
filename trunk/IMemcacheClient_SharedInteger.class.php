@@ -61,6 +61,7 @@ class IMemcacheClient_SharedInteger extends IMemcacheClient_Entry
   {
    $s = $this->memcache->get('shi.'.$this->id.$this->getTagsID());
    $this->int = ($s === FALSE)?NULL:$s;
+   if ($this->int === NULL) {$this->int = is_callable($this->initvalue)?call_user_func($this->initvalue,$this):$this->initvalue;}
    return $s !== FALSE;
   }
   return TRUE;
