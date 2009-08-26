@@ -14,6 +14,7 @@ class IMemcacheClient_SharedObject
  public $interval = 0.3;
  public $repeats = 10;
  public $rewritable = TRUE;
+ public $assoc = FALSE;
  public function __construct($memcache,$id,$TTL = NULL,$rewritable = NULL)
  {
   if ($TTL === NULL) {$TTL = 0;}
@@ -27,7 +28,7 @@ class IMemcacheClient_SharedObject
  public function fetchInter()
  {
   if (!$this->rewritable) {return $this->fetch()?1:0;}
-  if ($this->fetch()) {return 1;}
+  if ($this->fetch(TRUE)) {return 1;}
   if ($this->lock->acquire(0)) {return 2;}
   $i = 0;
   while (!$this->fetch())
@@ -55,7 +56,7 @@ class IMemcacheClient_SharedObject
  {
   if (!isset($this->obj) || $nonCache)
   {
-   $s = $this->memcache->get('sho.'.$this->id);
+   $s = $this->memcache->get('sho.'.$this->id,TRUE);
    $this->obj = ($s === FALSE)?FALSE:$this->decode($s);
    return $s !== FALSE;
   }
@@ -92,7 +93,7 @@ class IMemcacheClient_SharedObject
  public function decode($s)
  {
   if (substr($s,-1) == ',') {$s = substr($s,0,-1);}
-  return json_decode('{'.$s.'}');
+  return json_decode('{'.$s.'}',$this->assoc);
  }
  public function encode($o)
  {
