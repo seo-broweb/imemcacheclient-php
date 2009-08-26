@@ -46,6 +46,22 @@ class IMemcacheClient_Queue
   if (!$id) {return FALSE;}
   return $this->memcache->delete('qi.'.$this->id.'.'.$id,$t);
  }
+ public function getRangeNonAtomic($minId = 1,$maxId = NULL)
+ {
+  $r = array();
+  if ($minId < 1) {$minId = 1;}
+  for ($id = $minId; ($id < $maxId) || ($maxId === NULL); ++$id)
+  {
+   $v = $this->memcache->get('qi.'.$this->id.'.'.$id);
+   if ($v !== FALSE)
+   {
+    $v['id'] = $id;
+    $r[] = $v;
+   }
+   elseif ($maxId === NULL) {break;}
+  }
+  return $r;
+ }
  public function getNext()
  {
   $this->passedCorrupted = FALSE;

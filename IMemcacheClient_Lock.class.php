@@ -59,7 +59,8 @@ class IMemcacheClient_Lock
   if ($this->memcache->trace) {$this->memcache->trace_stack[] = array('release',$this->id,$d);}
   if (!$this->acquired && !$force) {return FALSE;}
   $this->acquired = FALSE;
-  return $this->memcache->delete('lck.'.$this->id,$d);
+  $this->memcache->delete('lck.'.$this->id,$d);
+  return TRUE;
  }
  public function isLocked()
  {
